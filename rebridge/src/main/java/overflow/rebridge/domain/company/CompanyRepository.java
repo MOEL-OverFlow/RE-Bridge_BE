@@ -1,10 +1,9 @@
-package overflow.rebridge.repository;
+package overflow.rebridge.domain.company;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import overflow.rebridge.domain.Company;
-import overflow.rebridge.domain.IndustryCategory;
-import overflow.rebridge.domain.Nation;
+import overflow.rebridge.domain.industrycategory.IndustryCategory;
+import overflow.rebridge.domain.nation.Nation;
 
 import java.util.List;
 

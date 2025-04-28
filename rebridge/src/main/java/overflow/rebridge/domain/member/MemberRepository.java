@@ -1,8 +1,7 @@
-package overflow.rebridge.repository;
+package overflow.rebridge.domain.member;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import overflow.rebridge.domain.Member;
 
 import java.util.Optional;
 

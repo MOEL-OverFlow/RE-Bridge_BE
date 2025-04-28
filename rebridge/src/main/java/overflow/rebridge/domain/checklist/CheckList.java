@@ -1,7 +1,10 @@
-package overflow.rebridge.domain;
+package overflow.rebridge.domain.checklist;
 
 import jakarta.persistence.*;
-import org.springframework.transaction.annotation.Transactional;
+import overflow.rebridge.domain.document.Document;
+import overflow.rebridge.domain.insurance.Insurance;
+import overflow.rebridge.domain.member.Member;
+import overflow.rebridge.domain.trainingprogram.TrainingProgram;
 
 @Entity
 @Table(name = "checklist")

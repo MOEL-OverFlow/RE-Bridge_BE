@@ -1,6 +1,7 @@
-package overflow.rebridge.domain;
+package overflow.rebridge.domain.interest;
 
 import jakarta.persistence.*;
+import overflow.rebridge.domain.member.Member;
 
 @Entity
 @Table(name = "interest")

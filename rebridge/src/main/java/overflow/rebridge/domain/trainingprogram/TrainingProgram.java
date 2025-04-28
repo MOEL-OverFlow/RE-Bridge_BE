@@ -1,6 +1,7 @@
-package overflow.rebridge.domain;
+package overflow.rebridge.domain.trainingprogram;
 
 import jakarta.persistence.*;
+import overflow.rebridge.domain.checklist.CheckList;
 
 @Entity
 @Table(name = "training_program")

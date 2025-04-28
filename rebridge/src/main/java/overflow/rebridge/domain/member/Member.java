@@ -1,6 +1,10 @@
-package overflow.rebridge.domain;
+package overflow.rebridge.domain.member;
 
 import jakarta.persistence.*;
+import overflow.rebridge.domain.nation.Nation;
+import overflow.rebridge.domain.checklist.CheckList;
+import overflow.rebridge.domain.image.Image;
+import overflow.rebridge.domain.interest.Interest;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

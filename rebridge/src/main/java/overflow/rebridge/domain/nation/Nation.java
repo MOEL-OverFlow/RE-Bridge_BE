@@ -1,6 +1,8 @@
-package overflow.rebridge.domain;
+package overflow.rebridge.domain.nation;
 
 import jakarta.persistence.*;
+import overflow.rebridge.domain.company.Company;
+import overflow.rebridge.domain.member.Member;
 
 import java.util.ArrayList;
 import java.util.List;

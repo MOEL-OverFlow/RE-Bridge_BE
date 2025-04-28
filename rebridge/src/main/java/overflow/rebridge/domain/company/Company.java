@@ -1,6 +1,8 @@
-package overflow.rebridge.domain;
+package overflow.rebridge.domain.company;
 
 import jakarta.persistence.*;
+import overflow.rebridge.domain.industrycategory.IndustryCategory;
+import overflow.rebridge.domain.nation.Nation;
 
 @Entity
 @Table(name = "company")
