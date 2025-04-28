@@ -14,7 +14,7 @@ public class IndustryCategory {
     private String industryId;
 
     @Column(name = "category_name")
-    private String catergoryName;
+    private String categoryName;
 
     @OneToMany(mappedBy = "industryCategory")
     private List<Company> companies = new ArrayList<>();
