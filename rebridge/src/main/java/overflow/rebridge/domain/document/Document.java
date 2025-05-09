@@ -15,6 +15,6 @@ public class Document {
     @JoinColumn(name = "check_list_id")
     private CheckList checkList;
 
-    private String customDeclaration;
-    private String severancePay;
+    private boolean customDeclaration;
+    private boolean severancePay;
 }

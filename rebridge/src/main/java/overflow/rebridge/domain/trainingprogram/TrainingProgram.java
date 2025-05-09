@@ -15,6 +15,6 @@ public class TrainingProgram {
     @JoinColumn(name = "check_list_id")
     private CheckList checkList;
 
-    private String resettlementSupport;
-    private String foreignWorkerTraining;
+    private boolean resettlementSupport;
+    private boolean foreignWorkerTraining;
 }

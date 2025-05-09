@@ -15,8 +15,8 @@ public class Insurance {
     @JoinColumn(name = "check_list_id")
     private CheckList checkList;
 
-    private String departureInsurance;
-    private String expenseInsurance;
-    private String suretyInsurance;
-    private String accidentInsurance;
+    private boolean departureInsurance;
+    private boolean expenseInsurance;
+    private boolean suretyInsurance;
+    private boolean accidentInsurance;
 }
