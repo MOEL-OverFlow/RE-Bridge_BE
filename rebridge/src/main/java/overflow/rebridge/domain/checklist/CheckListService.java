@@ -1,7 +1,9 @@
 package overflow.rebridge.domain.checklist;
 
+
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import overflow.rebridge.domain.document.Document;
@@ -14,6 +16,7 @@ public class CheckListService {
 
     private final CheckListRepository checkListRepository;
 
+    @Cacheable(cacheNames = "checklist", key = "#memberId")
     public CheckListStatusDto getStatus(Long memberId) {
         CheckList checkList = checkListRepository.findByMemberId(memberId)
                 .orElseThrow(() -> new EntityNotFoundException("CheckList not found for member id: " + memberId));
@@ -35,6 +38,7 @@ public class CheckListService {
     }
 
     @Transactional
+    @Cacheable(cacheNames = "checklist", key = "#memberId")
     public String setStatus(Long memberId, CheckListStatusDto dto) {
         CheckList checkList = checkListRepository.findByMemberId(memberId)
                 .orElseThrow(() -> new EntityNotFoundException("CheckList not found for member id: " + memberId));
