@@ -1,18 +1,22 @@
 package overflow.rebridge.domain.member;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 import overflow.rebridge.domain.nation.Nation;
 import overflow.rebridge.domain.checklist.CheckList;
 import overflow.rebridge.domain.image.Image;
 import overflow.rebridge.domain.interest.Interest;
+import overflow.rebridge.global.entity.BaseTimeEntity;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
 @Entity
 @Table(name = "member")
-public class Member {
+public class Member extends BaseTimeEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")
@@ -30,6 +34,10 @@ public class Member {
     @Column(name = "birthDate", nullable = false)
     private LocalDate birthDate;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false)
+    private Role role;  // Role 필드 추가
+
     @ManyToOne
     @JoinColumn(name = "nation_id")
     private Nation nation;
@@ -42,4 +50,15 @@ public class Member {
 
     @OneToMany(mappedBy = "member")
     private List<CheckList> checkLists = new ArrayList<>();
+
+    public Member() {
+
+    }
+
+    public Member(String name, String email, Role role) {
+        this.name = name;
+        this.email = email;
+        this.role = role;
+    }
+
 }
