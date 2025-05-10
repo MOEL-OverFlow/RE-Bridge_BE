@@ -15,7 +15,7 @@ import overflow.rebridge.domain.trainingprogram.TrainingProgram;
 public class CheckList {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "check_list_id")
+    @Column(name = "checklist_id")
     private Long checkListId;
 
     @ManyToOne

@@ -8,4 +8,6 @@ public class InsuranceService {
 
     @Autowired
     InsuranceRepository insuranceRepository;
+
+    
 }
