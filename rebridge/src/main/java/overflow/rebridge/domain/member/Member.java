@@ -13,6 +13,7 @@ import java.util.List;
 @Entity
 @Table(name = "member")
 public class Member {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")
@@ -29,6 +30,10 @@ public class Member {
 
     @Column(name = "birthDate", nullable = false)
     private LocalDate birthDate;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false)
+    private Role role;  // 🔹 Role 필드 추가
 
     @ManyToOne
     @JoinColumn(name = "nation_id")
