@@ -24,7 +24,7 @@ public class CheckListService {
 //                .orElseThrow(() -> new EntityNotFoundException("CheckList not found for member : " + memberId));
 //    }
 
-    public CheckListStatusResponse getStatus(Long memberId) {
+    public CheckListStatusDto getStatus(Long memberId) {
         CheckList checkList = checkListRepository.findByMemberId(memberId)
                 .orElseThrow(() -> new EntityNotFoundException("CheckList not found for member id: " + memberId));
 
@@ -32,7 +32,7 @@ public class CheckListService {
         Insurance insurance = checkList.getInsurance();
         TrainingProgram trainingProgram = checkList.getTrainingProgram();
 
-        return new CheckListStatusResponse(
+        return new CheckListStatusDto(
                 document.isCustomDeclaration(),
                 document.isSeverancePay(),
                 insurance.isDepartureInsurance(),
@@ -43,6 +43,4 @@ public class CheckListService {
                 trainingProgram.isForeignWorkerTraining()
         );
     }
-
-
 }
