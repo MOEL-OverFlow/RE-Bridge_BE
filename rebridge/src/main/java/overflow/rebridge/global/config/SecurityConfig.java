@@ -19,7 +19,6 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import overflow.rebridge.domain.member.Role;
 import overflow.rebridge.global.error.ErrorResponse;
-import overflow.rebridge.global.security.MyUserDetailsService;
 import overflow.rebridge.global.security.jwt.JwtAuthenticationFilter;
 import overflow.rebridge.global.security.jwt.JwtTokenProvider;
 
@@ -31,14 +30,12 @@ import java.io.PrintWriter;
 public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final MyUserDetailsService myUserDetailsService;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    // 핵심 보안 필터 체인 구성
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -46,11 +43,11 @@ public class SecurityConfig {
                 .headers(headers -> headers.frameOptions(frame -> frame.disable()))
                 .formLogin(form -> form.disable())
                 .httpBasic(basic -> basic.disable())
-                .sessionManagement(session -> session.disable()) // 세션 완전 비활성화
+                .sessionManagement(session -> session.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/", "/login/**", "/api/auth/**", "/oauth2/**",
-                                "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**" // swagger 접근 허용
+                                "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**"
                         ).permitAll()
                         .requestMatchers(PathRequest.toH2Console()).permitAll()
                         .requestMatchers("/posts/**", "/api/v1/posts/**").hasRole(Role.MEMBER.name())
@@ -62,15 +59,13 @@ public class SecurityConfig {
                         .accessDeniedHandler(accessDeniedHandler)
                 )
                 .addFilterBefore(
-                        new JwtAuthenticationFilter(jwtTokenProvider, myUserDetailsService),
+                        new JwtAuthenticationFilter(jwtTokenProvider),
                         UsernamePasswordAuthenticationFilter.class
-                )
-                .userDetailsService(myUserDetailsService);
+                );
 
         return http.build();
     }
 
-    // 인증 실패(401)
     public final AuthenticationEntryPoint unauthorizedEntryPoint = (request, response, authException) -> {
         ErrorResponse fail = new ErrorResponse(HttpStatus.UNAUTHORIZED, "Spring security unauthorized...");
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
@@ -81,7 +76,6 @@ public class SecurityConfig {
         writer.flush();
     };
 
-    // 인가 실패(403)
     public final AccessDeniedHandler accessDeniedHandler = (request, response, accessDeniedException) -> {
         ErrorResponse fail = new ErrorResponse(HttpStatus.FORBIDDEN, "Spring security forbidden...");
         response.setStatus(HttpStatus.FORBIDDEN.value());
