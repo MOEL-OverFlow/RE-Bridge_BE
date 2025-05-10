@@ -6,6 +6,7 @@ import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import overflow.rebridge.domain.member.Member;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
@@ -28,34 +29,49 @@ public class JwtTokenProvider {
         this.refreshTokenValidity = refreshTokenValidity;
     }
 
-    // Access Token 생성
-    public String createAccessToken(String email) {
-        return createToken(email, accessTokenValidity);
+    // Access Token 생성 (role, memberId 포함)
+    public String createAccessToken(Member member) {
+        return createToken(member.getEmail(), member.getMemberId(), member.getRole().name(), accessTokenValidity);
     }
 
-    // Refresh Token 생성
+    // Refresh Token은 email만 넣고 생성
     public String createRefreshToken(String email) {
-        return createToken(email, refreshTokenValidity);
+        return createToken(email, null, null, refreshTokenValidity);
     }
 
-    private String createToken(String email, long validity) {
+    // 토큰 생성 메서드
+    private String createToken(String email, Long memberId, String role, long validity) {
         Date now = new Date();
         Date expiry = new Date(now.getTime() + validity);
 
+        Claims claims = Jwts.claims().setSubject(email);
+        if (memberId != null) claims.put("memberId", memberId);
+        if (role != null) claims.put("role", role);
+
         return Jwts.builder()
-                .setSubject(email) // email을 subject로 설정
+                .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(expiry)
                 .signWith(secretKey, SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    // 토큰에서 email 추출
+    // 토큰에서 email(subject) 추출
     public String getEmail(String token) {
         return parseClaims(token).getSubject();
     }
 
-    // 토큰 유효성 검사
+    // 토큰에서 memberId 추출
+    public Long getMemberId(String token) {
+        return parseClaims(token).get("memberId", Long.class);
+    }
+
+    // 토큰에서 role 추출
+    public String getRole(String token) {
+        return parseClaims(token).get("role", String.class);
+    }
+
+    // 유효성 검사
     public boolean validateToken(String token) {
         try {
             parseClaims(token);

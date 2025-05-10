@@ -36,7 +36,7 @@ public class Member extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)
-    private Role role;  // 🔹 Role 필드 추가
+    private Role role;  // Role 필드 추가
 
     @ManyToOne
     @JoinColumn(name = "nation_id")
