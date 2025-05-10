@@ -1,6 +1,7 @@
 package overflow.rebridge.domain.member;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 import overflow.rebridge.domain.nation.Nation;
 import overflow.rebridge.domain.checklist.CheckList;
 import overflow.rebridge.domain.image.Image;
@@ -10,6 +11,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
 @Entity
 @Table(name = "member")
 public class Member {
