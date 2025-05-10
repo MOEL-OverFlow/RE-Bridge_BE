@@ -6,6 +6,7 @@ import overflow.rebridge.domain.nation.Nation;
 import overflow.rebridge.domain.checklist.CheckList;
 import overflow.rebridge.domain.image.Image;
 import overflow.rebridge.domain.interest.Interest;
+import overflow.rebridge.global.entity.BaseTimeEntity;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -14,7 +15,7 @@ import java.util.List;
 @Getter
 @Entity
 @Table(name = "member")
-public class Member {
+public class Member extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
