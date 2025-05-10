@@ -2,27 +2,17 @@ package overflow.rebridge.domain.checklist;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import overflow.rebridge.domain.document.Document;
-import overflow.rebridge.domain.document.DocumentRepository;
 import overflow.rebridge.domain.insurance.Insurance;
-import overflow.rebridge.domain.insurance.InsuranceRepository;
-import overflow.rebridge.domain.insurance.InsuranceService;
-import overflow.rebridge.domain.member.MemberService;
 import overflow.rebridge.domain.trainingprogram.TrainingProgram;
-import overflow.rebridge.domain.trainingprogram.TrainingProgramRepository;
 
 @Service
 @RequiredArgsConstructor
 public class CheckListService {
 
     private final CheckListRepository checkListRepository;
-
-//    public CheckList getCheckListByMemberId(Long memberId) {
-//        return checkListRepository.findByMemberId(memberId)
-//                .orElseThrow(() -> new EntityNotFoundException("CheckList not found for member : " + memberId));
-//    }
 
     public CheckListStatusDto getStatus(Long memberId) {
         CheckList checkList = checkListRepository.findByMemberId(memberId)
@@ -43,4 +33,33 @@ public class CheckListService {
                 trainingProgram.isForeignWorkerTraining()
         );
     }
+
+    @Transactional
+    public String setStatus(Long memberId, CheckListStatusDto dto) {
+        CheckList checkList = checkListRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new EntityNotFoundException("CheckList not found for member id: " + memberId));
+
+        Document document = checkList.getDocument();
+        Insurance insurance = checkList.getInsurance();
+        TrainingProgram trainingProgram = checkList.getTrainingProgram();
+
+        // Document 업데이트
+        document.setCustomDeclaration(dto.customDeclaration());
+        document.setSeverancePay(dto.severancePay());
+
+        // Insurance 업데이트
+        insurance.setDepartureInsurance(dto.departureInsurance());
+        insurance.setExpenseInsurance(dto.expenseInsurance());
+        insurance.setSuretyInsurance(dto.suretyInsurance());
+        insurance.setAccidentInsurance(dto.accidentInsurance());
+
+        // TrainingProgram 업데이트
+        trainingProgram.setResettlementSupport(dto.resettlementSupport());
+        trainingProgram.setForeignWorkerTraining(dto.foreignWorkerTraining());
+
+        checkListRepository.save(checkList);
+
+        return "Completed to update checklist";
+    }
+
 }

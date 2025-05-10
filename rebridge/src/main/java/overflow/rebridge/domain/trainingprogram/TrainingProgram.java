@@ -2,11 +2,13 @@ package overflow.rebridge.domain.trainingprogram;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 import overflow.rebridge.domain.checklist.CheckList;
 
 @Entity
 @Table(name = "training_program")
 @Getter
+@Setter
 public class TrainingProgram {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
