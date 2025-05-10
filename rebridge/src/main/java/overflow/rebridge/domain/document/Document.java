@@ -1,10 +1,12 @@
 package overflow.rebridge.domain.document;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 import overflow.rebridge.domain.checklist.CheckList;
 
 @Entity
 @Table(name = "document")
+@Getter
 public class Document {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -12,9 +14,9 @@ public class Document {
     private Long documentId;
 
     @OneToOne
-    @JoinColumn(name = "check_list_id")
+    @JoinColumn(name = "checklist_id")
     private CheckList checkList;
 
-    private String customDeclaration;
-    private String severancePay;
+    private boolean customDeclaration;
+    private boolean severancePay;
 }
