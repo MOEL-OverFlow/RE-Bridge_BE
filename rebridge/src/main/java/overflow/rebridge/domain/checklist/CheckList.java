@@ -3,6 +3,7 @@ package overflow.rebridge.domain.checklist;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.redis.core.RedisHash;
 import overflow.rebridge.domain.document.Document;
 import overflow.rebridge.domain.insurance.Insurance;
 import overflow.rebridge.domain.member.Member;
