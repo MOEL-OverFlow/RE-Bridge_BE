@@ -50,4 +50,15 @@ public class Member extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "member")
     private List<CheckList> checkLists = new ArrayList<>();
+
+    public Member() {
+
+    }
+
+    public Member(String name, String email, Role role) {
+        this.name = name;
+        this.email = email;
+        this.role = role;
+    }
+
 }
