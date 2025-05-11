@@ -2,7 +2,7 @@ package overflow.rebridge.domain.member;
 
 import jakarta.persistence.*;
 import lombok.Getter;
-import overflow.rebridge.domain.nation.Nation;
+import overflow.rebridge.domain.auth.dto.SignupRequest;
 import overflow.rebridge.domain.checklist.CheckList;
 import overflow.rebridge.domain.image.Image;
 import overflow.rebridge.domain.interest.Interest;
@@ -34,6 +34,9 @@ public class Member extends BaseTimeEntity {
     @Column(name = "birthDate")
     private LocalDate birthDate;
 
+    @Column(name = "foreigner_number")
+    private String foreignerNumber;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
     private Role role;  // Role 필드 추가
@@ -42,15 +45,17 @@ public class Member extends BaseTimeEntity {
     @Column(name = "login_type", nullable = false)
     private LoginType loginType;
 
-    @ManyToOne
-    @JoinColumn(name = "nation_id")
+    @Enumerated(EnumType.STRING)
     private Nation nation;
 
-    @OneToMany(mappedBy = "member")
-    private List<Interest> interest = new ArrayList<>();
+    @Enumerated(EnumType.STRING)
+    private Industry industry1;
 
-    @OneToMany(mappedBy = "member")
-    private List<Image> images = new ArrayList<>();
+    @Enumerated(EnumType.STRING)
+    private Industry industry2;
+
+    @OneToOne(mappedBy = "member")
+    private Image image;
 
     @OneToMany(mappedBy = "member")
     private List<CheckList> checkLists = new ArrayList<>();
@@ -66,4 +71,14 @@ public class Member extends BaseTimeEntity {
         this.loginType = loginType;
     }
 
+    public Member(SignupRequest request) {
+        this.email = request.email();
+        this.password = request.password();
+        this.name = request.name();
+        this.birthDate = request.birthDate();
+        this.foreignerNumber = request.foreignerNumber();
+        this.nation = Nation.valueOf(request.nation());
+        this.industry1 = Industry.valueOf(request.industry1());
+        this.industry2 = Industry.valueOf(request.industry2());
+    }
 }

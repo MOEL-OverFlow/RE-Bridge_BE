@@ -6,12 +6,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import overflow.rebridge.domain.auth.dto.GoogleLoginRequest;
 import overflow.rebridge.domain.auth.dto.GoogleLoginResponse;
 import overflow.rebridge.domain.auth.dto.LocalLoginRequest;
+import overflow.rebridge.domain.auth.dto.SignupRequest;
+import overflow.rebridge.domain.member.LoginType;
 import overflow.rebridge.domain.member.Member;
 import overflow.rebridge.domain.member.MemberRepository;
+import overflow.rebridge.domain.member.Role;
 import overflow.rebridge.global.security.jwt.JwtTokenProvider;
 
 import java.util.Map;
@@ -27,6 +31,8 @@ public class AuthController {
     private final RefreshTokenService refreshTokenService;
     private final AuthenticationManager authenticationManager;
     private final GoogleOAuthService googleOAuthService;
+    private final PasswordEncoder passwordEncoder;
+    private final AuthService authService;
 
     // 일반 로그인 API (email + password)
     @PostMapping("/login/local")
@@ -91,5 +97,15 @@ public class AuthController {
         String newAccessToken = jwtTokenProvider.createAccessToken(member);
 
         return ResponseEntity.ok(Map.of("accessToken", newAccessToken));
+    }
+
+    @PostMapping("/signup")
+    public ResponseEntity<?> signup(@RequestBody SignupRequest request) {
+        try {
+            authService.signup(request);
+            return ResponseEntity.ok("회원가입 성공");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 }

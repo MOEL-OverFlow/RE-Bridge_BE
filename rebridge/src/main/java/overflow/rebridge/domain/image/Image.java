@@ -11,10 +11,19 @@ public class Image {
     @Column(name = "image_id")
     private Long imageId;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "member_id")
     private Member member;
 
     @Column(name = "image_url")
     private String url;
+
+    public Image(String imageUrl, Member member) {
+        this.url = imageUrl;
+        this.member = member;
+    }
+
+    public Image() {
+
+    }
 }
