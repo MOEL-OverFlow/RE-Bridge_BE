@@ -1,4 +1,4 @@
-package overflow.rebridge.domain.trainingprogram;
+package overflow.rebridge.domain.educationprogram;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/")
-public class TrainingProgramController {
+public class EducationProgramController {
 
     @Autowired
-    TrainingProgramService trainingProgramService;
+    EducationProgramService educationProgramService;
 }

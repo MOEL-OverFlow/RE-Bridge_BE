@@ -3,11 +3,10 @@ package overflow.rebridge.domain.checklist;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.redis.core.RedisHash;
 import overflow.rebridge.domain.document.Document;
+import overflow.rebridge.domain.educationprogram.EducationProgram;
 import overflow.rebridge.domain.insurance.Insurance;
 import overflow.rebridge.domain.member.Member;
-import overflow.rebridge.domain.trainingprogram.TrainingProgram;
 
 @Entity
 @Getter
@@ -30,5 +29,5 @@ public class CheckList {
     private Document document;
 
     @OneToOne(mappedBy = "checkList", cascade = CascadeType.ALL)
-    private TrainingProgram trainingProgram;
+    private EducationProgram educationProgram;
 }
