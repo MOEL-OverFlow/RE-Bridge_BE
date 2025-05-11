@@ -7,7 +7,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/")
 public class DocumentController {
+    private final DocumentService documentService;
 
     @Autowired
-    DocumentController documentController;
+    public DocumentController(DocumentService documentService) {
+        this.documentService = documentService;
+    }
 }

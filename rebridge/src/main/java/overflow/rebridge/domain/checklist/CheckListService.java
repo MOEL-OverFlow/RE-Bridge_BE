@@ -18,7 +18,7 @@ public class CheckListService {
 
     @Cacheable(cacheNames = "checklist", key = "#memberId")
     public CheckListStatusDto getStatus(Long memberId) {
-        CheckList checkList = checkListRepository.findByMemberId(memberId)
+        CheckList checkList = checkListRepository.findByMemberMemberId(memberId)
                 .orElseThrow(() -> new EntityNotFoundException("CheckList not found for member id: " + memberId));
 
         Document document = checkList.getDocument();
@@ -40,7 +40,7 @@ public class CheckListService {
     @Transactional
     @Cacheable(cacheNames = "checklist", key = "#memberId")
     public String setStatus(Long memberId, CheckListStatusDto dto) {
-        CheckList checkList = checkListRepository.findByMemberId(memberId)
+        CheckList checkList = checkListRepository.findByMemberMemberId(memberId)
                 .orElseThrow(() -> new EntityNotFoundException("CheckList not found for member id: " + memberId));
 
         Document document = checkList.getDocument();
