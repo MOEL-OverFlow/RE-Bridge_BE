@@ -7,5 +7,5 @@ import java.util.Optional;
 
 @Repository
 public interface CheckListRepository extends JpaRepository<CheckList, Long> {
-    Optional<CheckList> findByMemberId(Long memberId);
+    Optional<CheckList> findByMemberMemberId(Long memberId);
 }

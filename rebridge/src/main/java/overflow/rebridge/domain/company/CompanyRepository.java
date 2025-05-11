@@ -14,5 +14,5 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
     List<Company> findByNation(Nation nation);
 
     //산업별 채용 공고 찾기
-    List<Company> findByIndustry(IndustryCategory industryCategory);
+    List<Company> findByIndustryCategory(IndustryCategory industryCategory);
 }

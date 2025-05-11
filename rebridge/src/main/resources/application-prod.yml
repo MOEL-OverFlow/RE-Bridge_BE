@@ -1,0 +1,27 @@
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://yeungnam-univ.cf0cq0qoq0ep.ap-northeast-2.rds.amazonaws.com:3306/teacher?useUnicode=true&characterEncoding=UTF-8
+    username: teacher
+    password: alfodmltjstodsla!
+
+    hikari:
+      max-lifetime: 170000
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    open-in-view: false
+
+  cache:
+    type: redis
+  data:
+    redis:
+      host: your-redis-host
+      port: 6379

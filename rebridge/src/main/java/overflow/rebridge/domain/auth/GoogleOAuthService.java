@@ -3,6 +3,7 @@ package overflow.rebridge.domain.auth;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import overflow.rebridge.domain.member.LoginType;
 import overflow.rebridge.domain.member.Member;
 import overflow.rebridge.domain.member.MemberRepository;
 import overflow.rebridge.domain.member.Role;
@@ -35,7 +36,7 @@ public class GoogleOAuthService {
             // 2. DB에서 회원 조회 또는 생성
             Optional<Member> optionalMember = memberRepository.findByEmail(email);
             Member member = optionalMember.orElseGet(() -> {
-                Member newMember = new Member(name, email, Role.GUEST);
+                Member newMember = new Member(name, email, Role.GUEST, LoginType.GOOGLE);
                 return memberRepository.save(newMember);
             });
 

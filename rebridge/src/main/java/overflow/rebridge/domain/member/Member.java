@@ -22,21 +22,25 @@ public class Member extends BaseTimeEntity {
     @Column(name = "member_id")
     private Long memberId;
 
-    @Column(name = "member_name", nullable = false)
+    @Column(name = "member_name")
     private String name;
 
-    @Column(name = "member_email", nullable = false)
+    @Column(name = "member_email")
     private String email;
 
-    @Column(name = "member_password", nullable = false)
+    @Column(name = "member_password")
     private String password;
 
-    @Column(name = "birthDate", nullable = false)
+    @Column(name = "birthDate")
     private LocalDate birthDate;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "role", nullable = false)
+    @Column(name = "role")
     private Role role;  // Role 필드 추가
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "login_type", nullable = false)
+    private LoginType loginType;
 
     @ManyToOne
     @JoinColumn(name = "nation_id")
@@ -55,10 +59,11 @@ public class Member extends BaseTimeEntity {
 
     }
 
-    public Member(String name, String email, Role role) {
+    public Member(String name, String email, Role role, LoginType loginType) {
         this.name = name;
         this.email = email;
         this.role = role;
+        this.loginType = loginType;
     }
 
 }
