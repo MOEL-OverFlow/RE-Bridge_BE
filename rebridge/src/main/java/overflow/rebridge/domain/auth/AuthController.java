@@ -7,6 +7,9 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import overflow.rebridge.domain.auth.dto.GoogleLoginRequest;
+import overflow.rebridge.domain.auth.dto.GoogleLoginResponse;
+import overflow.rebridge.domain.auth.dto.LocalLoginRequest;
 import overflow.rebridge.domain.member.Member;
 import overflow.rebridge.domain.member.MemberRepository;
 import overflow.rebridge.global.security.jwt.JwtTokenProvider;
@@ -14,7 +17,7 @@ import overflow.rebridge.global.security.jwt.JwtTokenProvider;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthController {
 
@@ -27,17 +30,17 @@ public class AuthController {
 
     // 일반 로그인 API (email + password)
     @PostMapping("/login/local")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> login(@RequestBody LocalLoginRequest localLoginRequest) {
 
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.email(), loginRequest.password())
+                new UsernamePasswordAuthenticationToken(localLoginRequest.email(), localLoginRequest.password())
         );
 
-        Member member = memberRepository.findByEmail(loginRequest.email())
+        Member member = memberRepository.findByEmail(localLoginRequest.email())
                 .orElseThrow(() -> new IllegalStateException("회원 정보를 찾을 수 없습니다."));
 
         String accessToken = jwtTokenProvider.createAccessToken(member);
-        String refreshToken = jwtTokenProvider.createRefreshToken(loginRequest.email());
+        String refreshToken = jwtTokenProvider.createRefreshToken(localLoginRequest.email());
 
         refreshTokenService.saveOrUpdate(member, refreshToken);
 
@@ -49,7 +52,7 @@ public class AuthController {
 
     // 구글 로그인 API (accessToken 전달)
     @PostMapping("/login/google")
-    public ResponseEntity<?> googleLogin(@RequestBody GoogleLoginRequest request) {
+    public ResponseEntity<GoogleLoginResponse> googleLogin(@RequestBody GoogleLoginRequest request) {
         String googleAccessToken = request.accessToken();
 
         Member member = googleOAuthService.loginWithGoogle(googleAccessToken);
@@ -57,12 +60,11 @@ public class AuthController {
         String accessToken = jwtTokenProvider.createAccessToken(member);
         String refreshToken = jwtTokenProvider.createRefreshToken(member.getEmail());
 
+        GoogleLoginResponse googleLoginResponse = new GoogleLoginResponse(member.getName(), member.getEmail(), member.getRole().toString(), member.getLoginType().toString(),accessToken, refreshToken );
+
         refreshTokenService.saveOrUpdate(member, refreshToken);
 
-        return ResponseEntity.ok(Map.of(
-                "accessToken", accessToken,
-                "refreshToken", refreshToken
-        ));
+        return ResponseEntity.ok(googleLoginResponse);
     }
 
     // 토큰 재발급 API
