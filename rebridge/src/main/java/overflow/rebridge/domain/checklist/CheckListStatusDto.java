@@ -12,6 +12,6 @@ public record CheckListStatusDto(
         boolean accidentInsurance,
 
         // Education Program 상태
-        boolean resettlementSupport,
+        boolean repatriationSupport,
         boolean foreignWorkerTraining
 ) {}

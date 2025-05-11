@@ -7,5 +7,5 @@ import org.springframework.stereotype.Service;
 public class EducationProgramService {
 
     @Autowired
-    EducationProgramRepository trainingProgramRepository;
+    EducationProgramRepository educationProgramRepository;
 }

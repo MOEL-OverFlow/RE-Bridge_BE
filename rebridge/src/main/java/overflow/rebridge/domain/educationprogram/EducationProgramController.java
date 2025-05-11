@@ -9,5 +9,5 @@ import org.springframework.web.bind.annotation.RestController;
 public class EducationProgramController {
 
     @Autowired
-    EducationProgramService trainingProgramService;
+    EducationProgramService educationProgramService;
 }

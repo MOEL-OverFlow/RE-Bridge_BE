@@ -19,6 +19,6 @@ public class EducationProgram {
     @JoinColumn(name = "checklist_id")
     private CheckList checkList;
 
-    private boolean resettlementSupport;
+    private boolean repatriationSupport;
     private boolean foreignWorkerTraining;
 }

@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 import overflow.rebridge.domain.document.Document;
 import overflow.rebridge.domain.educationprogram.EducationProgram;
 import overflow.rebridge.domain.insurance.Insurance;
-import overflow.rebridge.domain.educationprogram.TrainingProgram;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +32,7 @@ public class CheckListService {
                 insurance.isExpenseInsurance(),
                 insurance.isSuretyInsurance(),
                 insurance.isAccidentInsurance(),
-                educationProgram.isResettlementSupport(),
+                educationProgram.isRepatriationSupport(),
                 educationProgram.isForeignWorkerTraining()
         );
     }
@@ -59,7 +58,7 @@ public class CheckListService {
         insurance.setAccidentInsurance(dto.accidentInsurance());
 
         // EducationProgram 업데이트
-        educationProgram.setResettlementSupport(dto.resettlementSupport());
+        educationProgram.setRepatriationSupport(dto.repatriationSupport());
         educationProgram.setForeignWorkerTraining(dto.foreignWorkerTraining());
 
         checkListRepository.save(checkList);
