@@ -1,13 +1,9 @@
 spring:
   application:
-    name:
-      rebridge
+    name: rebridge
 
-jpa:
-  hibernate:
-    ddl-auto: update
-    show-sql: true
-  database-platform: org.hibernate.dialect.MySQL8Dialect
+  profiles:
+    active: local  # 로컬에서 기본값. 운영에선 prod로 덮어쓰기
 
   servlet:
     multipart:
@@ -18,11 +14,6 @@ jpa:
   config:
     import: classpath:application-secret.yml
 
-  logging:
-    level:
-      org.hibernate.SQL: DEBUG
-      org.hibernate.type: TRACE
-
 server:
   servlet:
     encoding:
@@ -31,5 +22,10 @@ server:
       force: true
   tomcat:
     max-http-form-post-size: 15MB
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type: TRACE
 
 debug: true
