@@ -1,4 +1,4 @@
-package overflow.rebridge.domain.trainingprogram;
+package overflow.rebridge.domain.educationprogram;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -6,14 +6,14 @@ import lombok.Setter;
 import overflow.rebridge.domain.checklist.CheckList;
 
 @Entity
-@Table(name = "training_program")
+@Table(name = "education_program")
 @Getter
 @Setter
-public class TrainingProgram {
+public class EducationProgram {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "training_program_id")
-    private Long trainingProgramId;
+    @Column(name = "education_program_id")
+    private Long educationProgramId;
 
     @OneToOne
     @JoinColumn(name = "checklist_id")

@@ -3,7 +3,7 @@ package overflow.rebridge.domain.checklist;
 public record CheckListStatusDto(
         // Document 상태
         boolean customDeclaration,
-        boolean severancePay,
+        boolean retirementAllowance,
 
         // Insurance 상태
         boolean departureInsurance,
@@ -11,7 +11,7 @@ public record CheckListStatusDto(
         boolean suretyInsurance,
         boolean accidentInsurance,
 
-        // Training Program 상태
+        // Education Program 상태
         boolean resettlementSupport,
         boolean foreignWorkerTraining
 ) {}

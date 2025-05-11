@@ -7,8 +7,9 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import overflow.rebridge.domain.document.Document;
+import overflow.rebridge.domain.educationprogram.EducationProgram;
 import overflow.rebridge.domain.insurance.Insurance;
-import overflow.rebridge.domain.trainingprogram.TrainingProgram;
+import overflow.rebridge.domain.educationprogram.TrainingProgram;
 
 @Service
 @RequiredArgsConstructor
@@ -23,17 +24,17 @@ public class CheckListService {
 
         Document document = checkList.getDocument();
         Insurance insurance = checkList.getInsurance();
-        TrainingProgram trainingProgram = checkList.getTrainingProgram();
+        EducationProgram educationProgram = checkList.getEducationProgram();
 
         return new CheckListStatusDto(
                 document.isCustomDeclaration(),
-                document.isSeverancePay(),
+                document.isRetirementAllowance(),
                 insurance.isDepartureInsurance(),
                 insurance.isExpenseInsurance(),
                 insurance.isSuretyInsurance(),
                 insurance.isAccidentInsurance(),
-                trainingProgram.isResettlementSupport(),
-                trainingProgram.isForeignWorkerTraining()
+                educationProgram.isResettlementSupport(),
+                educationProgram.isForeignWorkerTraining()
         );
     }
 
@@ -45,11 +46,11 @@ public class CheckListService {
 
         Document document = checkList.getDocument();
         Insurance insurance = checkList.getInsurance();
-        TrainingProgram trainingProgram = checkList.getTrainingProgram();
+        EducationProgram educationProgram = checkList.getEducationProgram();
 
         // Document 업데이트
         document.setCustomDeclaration(dto.customDeclaration());
-        document.setSeverancePay(dto.severancePay());
+        document.setRetirementAllowance(dto.retirementAllowance());
 
         // Insurance 업데이트
         insurance.setDepartureInsurance(dto.departureInsurance());
@@ -57,9 +58,9 @@ public class CheckListService {
         insurance.setSuretyInsurance(dto.suretyInsurance());
         insurance.setAccidentInsurance(dto.accidentInsurance());
 
-        // TrainingProgram 업데이트
-        trainingProgram.setResettlementSupport(dto.resettlementSupport());
-        trainingProgram.setForeignWorkerTraining(dto.foreignWorkerTraining());
+        // EducationProgram 업데이트
+        educationProgram.setResettlementSupport(dto.resettlementSupport());
+        educationProgram.setForeignWorkerTraining(dto.foreignWorkerTraining());
 
         checkListRepository.save(checkList);
 

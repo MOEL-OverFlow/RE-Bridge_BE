@@ -20,5 +20,5 @@ public class Document {
     private CheckList checkList;
 
     private boolean customDeclaration;
-    private boolean severancePay;
+    private boolean retirementAllowance;
 }
