@@ -12,7 +12,7 @@ public class IndustryCategory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "industry_category_id")
-    private String industryId;
+    private Long industryId;
 
     @Column(name = "category_name")
     private String categoryName;
