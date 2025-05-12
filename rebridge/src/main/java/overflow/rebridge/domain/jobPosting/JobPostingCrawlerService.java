@@ -25,37 +25,51 @@ public class JobPostingCrawlerService {
 
         for (int page = 1; page <= totalPages; page++) {
             try {
-                Document doc = Jsoup.connect(BASE_URL + page).get();
-                Elements rows = doc.select(".tbl01 tbody tr");
+                Document doc = Jsoup.connect(BASE_URL + page)
+                        .userAgent("Mozilla/5.0")
+                        .get();
+
+                Elements rows = doc.select("#normal_page table tbody tr");
+                System.out.println("📄 Page " + page + " - Row Count: " + rows.size());
 
                 for (Element row : rows) {
                     Elements tds = row.select("td");
-                    if (tds.size() < 9) continue;
+                    System.out.println("✔ ROW 크기: " + tds.size());
+
+                    if (tds.size() < 9) {
+                        System.out.println("⛔ row 건너뜀: column 개수 부족");
+                        continue;
+                    }
 
                     String companyName = tds.get(1).text().trim();
                     String jobTitle = tds.get(2).text().trim();
                     String industryStr = tds.get(3).text().trim();
                     String nationStr = tds.get(4).text().trim();
-                    String recruitmentStr = tds.get(5).text().replaceAll("[^0-9]", "0").trim();
+                    String rawRecruitment = tds.get(5).text().trim(); // ex: "3명"
+                    String recruitmentStr = rawRecruitment.replaceAll("[^0-9]", "").trim();
+                    int recruitmentCount = recruitmentStr.isEmpty() ? 0 : Integer.parseInt(recruitmentStr);
                     String experienceStr = tds.get(6).text().trim();
                     String koreanSkillStr = tds.get(7).text().trim();
                     String deadline = tds.get(8).text().trim();
 
                     Element link = tds.get(1).selectFirst("a");
                     String detailUrl = link != null ? link.absUrl("href") : "";
+                    System.out.println("✔ detailUrl: " + detailUrl);
 
                     if (jobPostingRepository.existsByDetailUrl(detailUrl)) {
+                        System.out.println("⚠️ 중복 URL 건너뜀");
                         continue;
                     }
 
                     Pair<Field, JobType> fieldAndJobType = mapFieldAndJobType(jobTitle);
+                    System.out.println("✔ 등록 예정 공고: " + companyName + " / " + jobTitle);
 
                     JobPosting post = JobPosting.of(
                             companyName,
                             detailUrl,
                             mapIndustry(industryStr),
                             mapNation(nationStr),
-                            Integer.parseInt(recruitmentStr),
+                            recruitmentCount,
                             mapExperience(experienceStr),
                             mapKoreanSkill(koreanSkillStr),
                             deadline,
@@ -67,6 +81,7 @@ public class JobPostingCrawlerService {
                 }
 
             } catch (Exception e) {
+                e.printStackTrace();
                 System.err.println("❌ [페이지 " + page + "] 크롤링 실패: " + e.getMessage());
             }
         }
@@ -77,48 +92,46 @@ public class JobPostingCrawlerService {
     private int getTotalPages() {
         try {
             Document doc = Jsoup.connect(BASE_URL + "1").get();
-            Element resultText = doc.selectFirst("div.total span"); // 예: "총 505 건"
-
+            Element resultText = doc.selectFirst("div.total span");
             if (resultText != null) {
-                String text = resultText.text().replaceAll("[^0-9]", ""); // "505"
+                String text = resultText.text().replaceAll("[^0-9]", "");
                 int total = Integer.parseInt(text);
-                return (total + 9) / 10; // 10개씩 페이지 나눔
+                return (total + 9) / 10;
             }
         } catch (Exception e) {
             System.err.println("❌ 총 건수 파싱 실패: " + e.getMessage());
         }
-
-        return 1; // 실패 시 fallback
+        return 1;
     }
 
     private Pair<Field, JobType> mapFieldAndJobType(String text) {
         String[] parts = text.split("/");
-        String fieldStr = parts.length > 0 ? parts[0].trim() : "";
-        String jobTypeStr = parts.length > 1 ? parts[1].trim() : "";
+        String fieldStr = parts.length > 0 ? parts[0].trim().toLowerCase() : "";
+        String jobTypeStr = parts.length > 1 ? parts[1].trim().toLowerCase() : "";
 
         Field field = switch (fieldStr) {
-            case "Construction 건설" -> Field.CONSTRUCTION;
-            case "Metal 금속" -> Field.METAL;
-            case "Machine 기계" -> Field.MACHINE;
-            case "Electricity 전기" -> Field.ELECTRICITY;
-            case "Electronic 전자" -> Field.ELECTRONIC;
-            case "Telecommunications 통신" -> Field.TELECOMMUNICATIONS;
-            case "Textile 섬유" -> Field.TEXTILE;
-            case "Chemicals 화학" -> Field.CHEMICALS;
-            case "Food 식품" -> Field.FOOD;
-            case "Agriculture 농업" -> Field.AGRICULTURE;
-            case "Stockbreeding 축산" -> Field.STOCKBREEDING;
-            case "Fishery 어업" -> Field.FISHERY;
-            case "Woodwork 목재" -> Field.WOODWORK;
-            case "Transport 운송" -> Field.TRANSPORT;
+            case "construction 건설", "건설" -> Field.CONSTRUCTION;
+            case "metal 금속", "금속" -> Field.METAL;
+            case "machine 기계", "기계" -> Field.MACHINE;
+            case "electricity 전기", "전기" -> Field.ELECTRICITY;
+            case "electronic 전자", "전자" -> Field.ELECTRONIC;
+            case "telecommunications 통신", "통신" -> Field.TELECOMMUNICATIONS;
+            case "textile 섬유", "섬유" -> Field.TEXTILE;
+            case "chemicals 화학", "화학" -> Field.CHEMICALS;
+            case "food 식품", "식품" -> Field.FOOD;
+            case "agriculture 농업", "농업" -> Field.AGRICULTURE;
+            case "stockbreeding 축산", "축산" -> Field.STOCKBREEDING;
+            case "fishery 어업", "어업" -> Field.FISHERY;
+            case "woodwork 목재", "목재" -> Field.WOODWORK;
+            case "transport 운송", "운송" -> Field.TRANSPORT;
             default -> Field.NONE;
         };
 
         JobType jobType = switch (jobTypeStr) {
-            case "Production Management 생산관리직" -> JobType.PRODUCTION_MANAGEMENT;
-            case "Business Management 영업관리직" -> JobType.BUSINESS_MANAGEMENT;
-            case "Interpret 통역" -> JobType.INTERPRET;
-            case "Clerical work 사무직" -> JobType.CLERICAL_WORK;
+            case "production management 생산관리직", "생산관리직" -> JobType.PRODUCTION_MANAGEMENT;
+            case "business management 영업관리직", "영업관리직" -> JobType.BUSINESS_MANAGEMENT;
+            case "interpret 통역", "통역" -> JobType.INTERPRET;
+            case "clerical work 사무직", "사무직" -> JobType.CLERICAL_WORK;
             default -> JobType.NONE;
         };
 

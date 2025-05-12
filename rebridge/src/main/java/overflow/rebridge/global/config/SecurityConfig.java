@@ -46,7 +46,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/", "/login/**", "/auth/**", "/oauth2/**",
+                                "/", "/login/**", "/auth/**", "/oauth2/**","/job-postings/**",
                                 "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**"
                         ).permitAll()
                         .requestMatchers(PathRequest.toH2Console()).permitAll()
