@@ -71,4 +71,9 @@ public class MemberService {
         }
     }
 
+    public void deactivate(Long memberId) {
+        Member member = findMemberById(memberId);
+        member.updateRole(Role.DEACTIVATED);
+        memberRepository.save(member);
+    }
 }

@@ -55,4 +55,10 @@ public class MemberController {
     public void updateProfileImage(@RequestBody UpdateImageRequest request, @AuthenticationPrincipal LoginUser loginUser) {
         memberService.updateProfileImage(loginUser.memberId(), request.newImageUrl());
     }
+
+    @PatchMapping("/deactivate")
+    @Operation(summary = "회원 탈퇴 (비활성화)")
+    public void deactivateAccount(@AuthenticationPrincipal LoginUser loginUser) {
+        memberService.deactivate(loginUser.memberId());
+    }
 }

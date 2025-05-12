@@ -31,6 +31,6 @@ public class Image {
     public Image(String imageUrl, Member member) {
         this.url = imageUrl;
         this.member = member;
-        member.setImage(this); // 양방향 연결
+        member.updateImage(this); // 양방향 연결
     }
 }

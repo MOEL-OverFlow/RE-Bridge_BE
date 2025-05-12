@@ -152,7 +152,11 @@ public class Member extends BaseTimeEntity {
         this.field2 = field2;
     }
 
-    public void setImage(Image image) {
+    public void updateRole(Role role) {
+        this.role = role;
+    }
+
+    public void updateImage(Image image) {
         this.image = image;
     }
 }
