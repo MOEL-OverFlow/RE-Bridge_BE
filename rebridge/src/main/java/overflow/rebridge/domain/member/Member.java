@@ -75,9 +75,9 @@ public class Member extends BaseTimeEntity {
         this.loginType = loginType;
     }
 
-    public Member(SignupRequest request) {
+    public Member(SignupRequest request, String encodedPassword) {
         this.email = request.email();
-        this.password = request.password();
+        this.password = encodedPassword;
         this.name = request.name();
         this.birthDate = request.birthDate();
         this.foreignerNumber = request.foreignerNumber();

@@ -2,8 +2,10 @@ package overflow.rebridge.domain.jobPosting;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import overflow.rebridge.domain.member.Nation;
+import overflow.rebridge.domain.jobPosting.dto.JobPostingResponse;
+import overflow.rebridge.global.security.LoginUser;
 
 import java.util.List;
 
@@ -21,27 +23,10 @@ public class JobPostingController {
     }
 
     @GetMapping
-    public ResponseEntity<List<JobPosting>> getAll() {
-        return ResponseEntity.ok(jobPostingService.findAll());
+    public ResponseEntity<List<JobPostingResponse>> getAll(
+            @AuthenticationPrincipal LoginUser loginUser
+    ) {
+        return ResponseEntity.ok(jobPostingService.findAll(loginUser.memberId()));
     }
 
-    @GetMapping("/nation/{nation}")
-    public ResponseEntity<List<JobPosting>> getByNation(@PathVariable Nation nation) {
-        return ResponseEntity.ok(jobPostingService.findByNation(nation));
-    }
-
-    @GetMapping("/industry/{industryType}")
-    public ResponseEntity<List<JobPosting>> getByIndustry(@PathVariable IndustryType industryType) {
-        return ResponseEntity.ok(jobPostingService.findByIndustryType(industryType));
-    }
-
-    @GetMapping("/field/{field}")
-    public ResponseEntity<List<JobPosting>> getByField(@PathVariable Field field) {
-        return ResponseEntity.ok(jobPostingService.findByField(field));
-    }
-
-    @GetMapping("/job-type/{jobType}")
-    public ResponseEntity<List<JobPosting>> getByJobType(@PathVariable JobType jobType) {
-        return ResponseEntity.ok(jobPostingService.findByJobType(jobType));
-    }
 }
