@@ -46,6 +46,9 @@ dependencies {
 	implementation 'org.hibernate.validator:hibernate-validator'
 	//크롤링
 	implementation 'org.jsoup:jsoup:1.15.4'
+	// AWS S3
+	implementation platform("software.amazon.awssdk:bom:2.25.8")
+	implementation "software.amazon.awssdk:s3"
 }
 
 tasks.named('test') {
