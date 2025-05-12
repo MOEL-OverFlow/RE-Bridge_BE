@@ -1,4 +1,4 @@
-package overflow.rebridge.domain.member;
+package overflow.rebridge.domain.member.dto;
 
 public enum LoginType {
     LOCAL,

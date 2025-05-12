@@ -3,7 +3,7 @@ package overflow.rebridge.domain.auth;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import overflow.rebridge.domain.member.LoginType;
+import overflow.rebridge.domain.member.dto.LoginType;
 import overflow.rebridge.domain.member.Member;
 import overflow.rebridge.domain.member.MemberRepository;
 import overflow.rebridge.domain.member.Role;

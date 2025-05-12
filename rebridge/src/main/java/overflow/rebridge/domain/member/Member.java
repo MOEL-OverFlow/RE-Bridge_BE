@@ -8,6 +8,7 @@ import overflow.rebridge.domain.bookmark.Bookmark;
 import overflow.rebridge.domain.checklist.CheckList;
 import overflow.rebridge.domain.image.Image;
 import overflow.rebridge.domain.jobPosting.Field;
+import overflow.rebridge.domain.member.dto.LoginType;
 import overflow.rebridge.global.entity.BaseTimeEntity;
 
 import java.time.LocalDate;
