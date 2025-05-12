@@ -6,8 +6,9 @@ import overflow.rebridge.domain.bookmark.BookmarkRepository;
 import overflow.rebridge.domain.jobPosting.dto.JobPostingResponse;
 import overflow.rebridge.domain.member.Member;
 import overflow.rebridge.domain.member.MemberService;
-import overflow.rebridge.domain.member.Nation;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -56,4 +57,25 @@ public class JobPostingService {
                 isBookmarked
         );
     }
+
+    public List<JobPostingResponse> recommend(Long memberId) {
+
+        Member member = memberService.findMemberById(memberId);
+        List<JobPosting> primary = jobPostingRepository.findByNationAndField(member.getNation(), member.getField1());
+        Collections.shuffle(primary);
+        List<JobPosting> results = new ArrayList<>(primary.stream().limit(5).toList());
+
+        if (results.size() < 5 && member.getField2() != null) {
+            List<JobPosting> secondary = jobPostingRepository.findByNationAndField(member.getNation(), member.getField2());
+            Collections.shuffle(secondary);
+            // 중복 제거
+            secondary.removeIf(job -> results.contains(job));
+            results.addAll(secondary.stream().limit(5 - results.size()).toList());
+        }
+
+        return results.stream()
+                .map(jobPosting -> toResponse(jobPosting, member))
+                .collect(Collectors.toList());
+    }
+
 }

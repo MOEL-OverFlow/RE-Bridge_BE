@@ -32,4 +32,12 @@ public class JobPostingController {
         return ResponseEntity.ok(jobPostingService.findAll(loginUser.memberId()));
     }
 
+    @GetMapping("/recommend")
+    @Operation(summary = "추천 채용 공고 불러오기")
+    public ResponseEntity<List<JobPostingResponse>> recommend(
+            @AuthenticationPrincipal LoginUser loginUser
+    ){
+        return ResponseEntity.ok(jobPostingService.recommend(loginUser.memberId()));
+    }
+
 }

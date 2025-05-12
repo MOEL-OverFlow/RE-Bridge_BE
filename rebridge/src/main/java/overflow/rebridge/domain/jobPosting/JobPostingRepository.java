@@ -8,11 +8,5 @@ import java.util.List;
 public interface JobPostingRepository extends JpaRepository<JobPosting, Long> {
     boolean existsByDetailUrl(String detailUrl);
 
-    List<JobPosting> findByNation(Nation nation);
-
-    List<JobPosting> findByIndustryType(IndustryType industryType);
-
-    List<JobPosting> findByField(Field field);
-
-    List<JobPosting> findByJobType(JobType jobType);
+    List<JobPosting> findByNationAndField(Nation nation, Field field);
 }
