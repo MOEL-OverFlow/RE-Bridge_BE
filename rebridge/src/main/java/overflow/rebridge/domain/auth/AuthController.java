@@ -8,10 +8,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import overflow.rebridge.domain.auth.dto.GoogleLoginRequest;
-import overflow.rebridge.domain.auth.dto.GoogleLoginResponse;
-import overflow.rebridge.domain.auth.dto.LocalLoginRequest;
-import overflow.rebridge.domain.auth.dto.SignupRequest;
+import overflow.rebridge.domain.auth.dto.*;
 import overflow.rebridge.domain.member.LoginType;
 import overflow.rebridge.domain.member.Member;
 import overflow.rebridge.domain.member.MemberRepository;
@@ -104,6 +101,16 @@ public class AuthController {
         try {
             authService.signup(request);
             return ResponseEntity.ok("회원가입 성공");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/findid")
+    public ResponseEntity<?> findId(@RequestBody FindIdRequest request) {
+        try {
+            String email = authService.findid(request);
+            return ResponseEntity.ok(email);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
