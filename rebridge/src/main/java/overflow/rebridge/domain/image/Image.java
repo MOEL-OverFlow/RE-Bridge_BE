@@ -1,10 +1,12 @@
 package overflow.rebridge.domain.image;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 import overflow.rebridge.domain.member.Member;
 
 @Entity
 @Table(name = "image")
+@Getter
 public class Image {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,12 +20,17 @@ public class Image {
     @Column(name = "image_url")
     private String url;
 
+    public Image() {
+
+    }
+
+    public void updateUrl(String newImageUrl) {
+        this.url = newImageUrl;
+    }
+
     public Image(String imageUrl, Member member) {
         this.url = imageUrl;
         this.member = member;
-    }
-
-    public Image() {
-
+        member.updateImage(this); // 양방향 연결
     }
 }

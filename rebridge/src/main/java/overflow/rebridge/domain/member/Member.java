@@ -2,12 +2,13 @@ package overflow.rebridge.domain.member;
 
 import jakarta.persistence.*;
 import lombok.Getter;
-import org.hibernate.validator.constraints.UniqueElements;
+import overflow.rebridge.domain.auth.dto.FindPasswordRequest;
 import overflow.rebridge.domain.auth.dto.SignupRequest;
 import overflow.rebridge.domain.bookmark.Bookmark;
 import overflow.rebridge.domain.checklist.CheckList;
 import overflow.rebridge.domain.image.Image;
 import overflow.rebridge.domain.jobPosting.Field;
+import overflow.rebridge.domain.member.dto.mypageResponse;
 import overflow.rebridge.global.entity.BaseTimeEntity;
 
 import java.time.LocalDate;
@@ -56,7 +57,7 @@ public class Member extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private Field field2;
 
-    @OneToOne(mappedBy = "member")
+    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private Image image;
 
     @OneToMany(mappedBy = "member")
@@ -102,4 +103,60 @@ public class Member extends BaseTimeEntity {
         this.role = Role.MEMBER;
     }
 
+    public boolean check(FindPasswordRequest request) {
+        if(!this.email.equals(request.email())) {
+            return false;
+        }
+        else if (!this.name.equals(request.name())) {
+            return false;
+        }
+        else if (!this.foreignerNumber.equals(request.foreignerNumber())) {
+            return false;
+        }
+        else if (!this.birthDate.equals(request.birthDate())) {
+            return false;
+        }
+        return true;
+    }
+
+    public void updatePassword(String encodedPassword) {
+        this.password = encodedPassword;
+    }
+
+    public mypageResponse toInfo() {
+        return new mypageResponse(
+                this.email,
+                this.image.getUrl(),
+                this.name,
+                this.birthDate,
+                this.nation.toString(),
+                this.field1.toString(),
+                this.field2.toString()
+        );
+    }
+
+    public void updateName(String name) {
+        this.name = name;
+    }
+
+    public void updateBirthDate(LocalDate birthDate) {
+        this.birthDate = birthDate;
+    }
+
+    public void updateNation(Nation nation) {
+        this.nation = nation;
+    }
+
+    public void updateField(Field field1, Field field2) {
+        this.field1 = field1;
+        this.field2 = field2;
+    }
+
+    public void updateRole(Role role) {
+        this.role = role;
+    }
+
+    public void updateImage(Image image) {
+        this.image = image;
+    }
 }

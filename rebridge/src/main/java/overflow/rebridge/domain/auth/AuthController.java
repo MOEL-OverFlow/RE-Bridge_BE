@@ -135,4 +135,15 @@ public class AuthController {
         }
     }
 
+    @PostMapping("/reset-password")
+    @Operation(summary = "비밀번호 초기화 (임시 비밀번호 이메일 전송)")
+    public ResponseEntity<?> resetPassword(@RequestBody FindPasswordRequest request) {
+        try {
+            authService.sendTemporaryPassword(request);
+            return ResponseEntity.ok("임시 비밀번호가 이메일로 전송되었습니다.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
 }
