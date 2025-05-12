@@ -2,7 +2,11 @@ package overflow.rebridge.domain.jobPosting;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import overflow.rebridge.domain.bookmark.Bookmark;
 import overflow.rebridge.domain.member.Nation;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
@@ -49,6 +53,9 @@ public class JobPosting {
 
     @Column(name = "deadline", nullable = false)
     private String deadline; // 마감일
+
+    @OneToMany(mappedBy = "jobPosting", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Bookmark> bookmarks = new ArrayList<>();
 
     protected JobPosting() {
     }

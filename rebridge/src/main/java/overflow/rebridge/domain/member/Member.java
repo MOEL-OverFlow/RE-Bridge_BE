@@ -3,6 +3,7 @@ package overflow.rebridge.domain.member;
 import jakarta.persistence.*;
 import lombok.Getter;
 import overflow.rebridge.domain.auth.dto.SignupRequest;
+import overflow.rebridge.domain.bookmark.Bookmark;
 import overflow.rebridge.domain.checklist.CheckList;
 import overflow.rebridge.domain.image.Image;
 import overflow.rebridge.domain.jobPosting.Field;
@@ -59,6 +60,9 @@ public class Member extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "member")
     private List<CheckList> checkLists = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Bookmark> bookmarks = new ArrayList<>();
 
     public Member() {
 
