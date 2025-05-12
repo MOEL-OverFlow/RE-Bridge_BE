@@ -1,5 +1,6 @@
 package overflow.rebridge.domain.auth;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +34,7 @@ public class AuthController {
 
     // 일반 로그인 API (email + password)
     @PostMapping("/login/local")
+    @Operation(summary = "일반 로그인")
     public ResponseEntity<?> login(@RequestBody LocalLoginRequest localLoginRequest) {
 
         Authentication authentication = authenticationManager.authenticate(
@@ -55,6 +57,7 @@ public class AuthController {
 
     // 구글 로그인 API (accessToken 전달)
     @PostMapping("/login/google")
+    @Operation(summary = "구글 로그인")
     public ResponseEntity<GoogleLoginResponse> googleLogin(@RequestBody GoogleLoginRequest request) {
         String googleAccessToken = request.accessToken();
 
@@ -72,6 +75,7 @@ public class AuthController {
 
     // 토큰 재발급 API
     @PostMapping("/reissue")
+    @Operation(summary = "토큰 재발급")
     public ResponseEntity<?> reissue(@RequestHeader("Authorization") String refreshHeader) {
         String refreshToken = refreshHeader.replace("Bearer ", "");
 
@@ -97,6 +101,7 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
+    @Operation(summary = "일반 회원가입")
     public ResponseEntity<?> signup(@RequestBody SignupRequest request) {
         try {
             authService.signup(request);

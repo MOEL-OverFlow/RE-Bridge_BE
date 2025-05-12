@@ -7,18 +7,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import overflow.rebridge.domain.auth.dto.FindIdRequest;
 import overflow.rebridge.domain.auth.dto.SignupRequest;
-import overflow.rebridge.domain.image.Image;
 import overflow.rebridge.domain.image.ImageService;
 import overflow.rebridge.domain.member.Member;
 import overflow.rebridge.domain.member.MemberRepository;
-import overflow.rebridge.domain.nation.NationRepository;
 
 @Service
 @RequiredArgsConstructor
 public class AuthService {
 
     private final MemberRepository memberRepository;
-    private final NationRepository nationRepository;
     private final PasswordEncoder passwordEncoder;
     private final ImageService imageService;
 
@@ -30,7 +27,7 @@ public class AuthService {
         }
 
         String encodedPassword = passwordEncoder.encode(request.password());
-        Member member = new Member(request);
+        Member member = new Member(request, encodedPassword);
         imageService.saveImage(request.image(), member);
         memberRepository.save(member);
 

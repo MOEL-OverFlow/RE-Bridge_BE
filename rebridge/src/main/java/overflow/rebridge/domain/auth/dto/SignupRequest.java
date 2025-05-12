@@ -1,8 +1,5 @@
 package overflow.rebridge.domain.auth.dto;
 
-import overflow.rebridge.domain.image.Image;
-import overflow.rebridge.domain.nation.Nation;
-
 import java.time.LocalDate;
 
 public record SignupRequest(

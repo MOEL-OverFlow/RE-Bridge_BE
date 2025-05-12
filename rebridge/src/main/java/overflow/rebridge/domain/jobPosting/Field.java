@@ -1,6 +1,7 @@
-package overflow.rebridge.domain.member;
+package overflow.rebridge.domain.jobPosting;
 
-public enum Industry {
+public enum Field {
+    NONE,
     CONSTRUCTION,       // 건설
     METAL,              // 금속
     MACHINE,            // 기계
