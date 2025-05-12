@@ -57,7 +57,7 @@ public class Member extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private Field field2;
 
-    @OneToOne(mappedBy = "member")
+    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private Image image;
 
     @OneToMany(mappedBy = "member")
@@ -133,5 +133,26 @@ public class Member extends BaseTimeEntity {
                 this.field1.toString(),
                 this.field2.toString()
         );
+    }
+
+    public void updateName(String name) {
+        this.name = name;
+    }
+
+    public void updateBirthDate(LocalDate birthDate) {
+        this.birthDate = birthDate;
+    }
+
+    public void updateNation(Nation nation) {
+        this.nation = nation;
+    }
+
+    public void updateField(Field field1, Field field2) {
+        this.field1 = field1;
+        this.field2 = field2;
+    }
+
+    public void setImage(Image image) {
+        this.image = image;
     }
 }

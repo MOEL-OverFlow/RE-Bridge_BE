@@ -20,12 +20,17 @@ public class Image {
     @Column(name = "image_url")
     private String url;
 
+    public Image() {
+
+    }
+
+    public void updateUrl(String newImageUrl) {
+        this.url = newImageUrl;
+    }
+
     public Image(String imageUrl, Member member) {
         this.url = imageUrl;
         this.member = member;
-    }
-
-    public Image() {
-
+        member.setImage(this); // 양방향 연결
     }
 }
