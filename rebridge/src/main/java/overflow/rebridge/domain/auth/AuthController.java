@@ -95,7 +95,7 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    @Operation(summary = "일반 회원가입")
+    @Operation(summary = "회원가입")
     public ResponseEntity<?> signup(@RequestBody SignupRequest request) {
         try {
             authService.signup(request);

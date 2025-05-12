@@ -11,6 +11,7 @@ public record SignupRequest(
         String nation,
         String image,
         String industry1,
-        String industry2
+        String industry2,
+        String loginType
 ) {
 }
