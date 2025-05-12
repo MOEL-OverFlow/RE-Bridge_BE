@@ -11,33 +11,42 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import overflow.rebridge.domain.member.Nation;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Service
 @RequiredArgsConstructor
 public class JobPostingCrawlerService {
 
     private final JobPostingRepository jobPostingRepository;
-    private static final String BASE_URL = "https://eps.hrdkorea.or.kr/e9/user/jobMatching/jobRecruit.do?method=recruitList&currentPage=";
+    private static final String BASE_URL = "https://eps.hrdkorea.or.kr/e9/user/jobMatching/jobRecruit.do";
 
     @Scheduled(cron = "0 0 3 * * ?") // 매일 새벽 3시
     @Transactional
     public void crawl() {
         int totalPages = getTotalPages();
+        System.out.println("📌 총 페이지 수: " + totalPages);
 
         for (int page = 1; page <= totalPages; page++) {
             try {
-                Document doc = Jsoup.connect(BASE_URL + page)
+                Map<String, String> formData = new HashMap<>();
+                formData.put("method", "recruitList");
+                formData.put("currentPage", String.valueOf(page));
+
+                Document doc = Jsoup.connect(BASE_URL)
                         .userAgent("Mozilla/5.0")
-                        .get();
+                        .data(formData)
+                        .post();
 
                 Elements rows = doc.select("#normal_page table tbody tr");
                 System.out.println("📄 Page " + page + " - Row Count: " + rows.size());
 
                 for (Element row : rows) {
                     Elements tds = row.select("td");
-                    System.out.println("✔ ROW 크기: " + tds.size());
 
-                    if (tds.size() < 9) {
-                        System.out.println("⛔ row 건너뜀: column 개수 부족");
+                    // 실제 채용 데이터인지 확인
+                    if (tds.size() < 9 || tds.get(1).selectFirst("a") == null) {
+                        System.out.println("⛔ row 건너뜀: column 개수 부족 또는 링크 없음");
                         continue;
                     }
 
@@ -45,25 +54,22 @@ public class JobPostingCrawlerService {
                     String jobTitle = tds.get(2).text().trim();
                     String industryStr = tds.get(3).text().trim();
                     String nationStr = tds.get(4).text().trim();
-                    String rawRecruitment = tds.get(5).text().trim(); // ex: "3명"
-                    String recruitmentStr = rawRecruitment.replaceAll("[^0-9]", "").trim();
+                    String rawRecruitment = tds.get(5).text().trim();
+                    String recruitmentStr = rawRecruitment.replaceAll("[^0-9]", "");
                     int recruitmentCount = recruitmentStr.isEmpty() ? 0 : Integer.parseInt(recruitmentStr);
                     String experienceStr = tds.get(6).text().trim();
                     String koreanSkillStr = tds.get(7).text().trim();
                     String deadline = tds.get(8).text().trim();
 
                     Element link = tds.get(1).selectFirst("a");
-                    String detailUrl = link != null ? link.absUrl("href") : "";
-                    System.out.println("✔ detailUrl: " + detailUrl);
+                    String detailUrl = link != null ? "https://eps.hrdkorea.or.kr" + link.attr("href") : "";
 
                     if (jobPostingRepository.existsByDetailUrl(detailUrl)) {
-                        System.out.println("⚠️ 중복 URL 건너뜀");
+                        System.out.println("⚠️ 중복 URL 건너뜀: " + detailUrl);
                         continue;
                     }
 
                     Pair<Field, JobType> fieldAndJobType = mapFieldAndJobType(jobTitle);
-                    System.out.println("✔ 등록 예정 공고: " + companyName + " / " + jobTitle);
-
                     JobPosting post = JobPosting.of(
                             companyName,
                             detailUrl,
@@ -81,8 +87,8 @@ public class JobPostingCrawlerService {
                 }
 
             } catch (Exception e) {
+                System.err.println("❌ 페이지 " + page + " 처리 실패: " + e.getMessage());
                 e.printStackTrace();
-                System.err.println("❌ [페이지 " + page + "] 크롤링 실패: " + e.getMessage());
             }
         }
 
@@ -91,18 +97,36 @@ public class JobPostingCrawlerService {
 
     private int getTotalPages() {
         try {
-            Document doc = Jsoup.connect(BASE_URL + "1").get();
-            Element resultText = doc.selectFirst("div.total span");
-            if (resultText != null) {
-                String text = resultText.text().replaceAll("[^0-9]", "");
-                int total = Integer.parseInt(text);
-                return (total + 9) / 10;
+            Map<String, String> formData = new HashMap<>();
+            formData.put("method", "recruitList");
+            formData.put("currentPage", "1");
+
+            Document doc = Jsoup.connect(BASE_URL)
+                    .userAgent("Mozilla/5.0")
+                    .data(formData)
+                    .post();
+
+            // 페이지 네비게이션 영역에서 마지막 페이지 번호 추출
+            Elements pageLinks = doc.select("div.pageNavigation a[href*=currentPage=]");
+            int maxPage = 1;
+            for (Element link : pageLinks) {
+                String href = link.attr("href");
+                String pageStr = href.replaceAll(".*currentPage=([0-9]+).*", "$1");
+                try {
+                    int page = Integer.parseInt(pageStr);
+                    maxPage = Math.max(maxPage, page);
+                } catch (NumberFormatException ignored) {}
             }
+
+            System.out.println("📌 추출된 마지막 페이지 수: " + maxPage);
+            return maxPage;
+
         } catch (Exception e) {
-            System.err.println("❌ 총 건수 파싱 실패: " + e.getMessage());
+            System.err.println("❌ 총 페이지 수 계산 실패: " + e.getMessage());
         }
         return 1;
     }
+
 
     private Pair<Field, JobType> mapFieldAndJobType(String text) {
         String[] parts = text.split("/");

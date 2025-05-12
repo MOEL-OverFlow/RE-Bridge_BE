@@ -10,6 +10,10 @@ import overflow.rebridge.domain.auth.dto.SignupRequest;
 import overflow.rebridge.domain.image.ImageService;
 import overflow.rebridge.domain.member.Member;
 import overflow.rebridge.domain.member.MemberRepository;
+import overflow.rebridge.domain.member.Nation;
+import overflow.rebridge.domain.member.Role;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -20,24 +24,44 @@ public class AuthService {
     private final ImageService imageService;
 
     public void signup(SignupRequest request) {
-        if (memberRepository.findByEmail(request.email()).isPresent()) {
-            ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body("이미 존재하는 이메일입니다.");
+        Optional<Member> optionalMember = memberRepository.findByEmail(request.email());
+        String encodedPassword = passwordEncoder.encode(request.password());
+
+        if (optionalMember.isPresent()) {
+            Member member = optionalMember.get();
+
+            if (member.getRole() != Role.GUEST) {
+                throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
+            }
+
+            // 외국인등록번호 중복 검사 (GUEST여도 다른 사람이 이미 썼을 수 있음)
+            Optional<Member> foreignerNumberConflict = memberRepository.findByForeignerNumber(request.foreignerNumber());
+            if (foreignerNumberConflict.isPresent() && !foreignerNumberConflict.get().getEmail().equals(request.email())) {
+                throw new IllegalArgumentException("이미 존재하는 외국인 등록번호입니다.");
+            }
+
+            // GUEST → MEMBER 정보 업데이트
+            member.updateInfo(request, encodedPassword);
+            memberRepository.save(member);
+            imageService.saveImage(request.image(), member);
             return;
         }
 
-        String encodedPassword = passwordEncoder.encode(request.password());
+        // 신규 회원가입 (이메일도 없음)
+        if (memberRepository.findByForeignerNumber(request.foreignerNumber()).isPresent()) {
+            throw new IllegalArgumentException("이미 존재하는 외국인 등록번호입니다.");
+        }
+
         Member member = new Member(request, encodedPassword);
         memberRepository.save(member);
         imageService.saveImage(request.image(), member);
-        ResponseEntity.ok("회원가입 성공");
     }
 
-    public String findid(FindIdRequest request) {
+    public String findId(FindIdRequest request) {
         Member member = memberRepository.findByForeignerNumberAndNameAndNationAndBirthDate(
                 request.foreignerNumber(),
                 request.name(),
-                request.nation(),
+                Nation.valueOf(request.nation()),
                 request.birthDate()
         ).orElseThrow(() -> new IllegalArgumentException("일치하는 회원 정보를 찾을 수 없습니다."));
 

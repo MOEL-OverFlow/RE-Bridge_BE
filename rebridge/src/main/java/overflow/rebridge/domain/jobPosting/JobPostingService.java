@@ -3,15 +3,19 @@ package overflow.rebridge.domain.jobPosting;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import overflow.rebridge.domain.bookmark.BookmarkRepository;
+import overflow.rebridge.domain.jobPosting.dto.FilteringRequest;
 import overflow.rebridge.domain.jobPosting.dto.JobPostingResponse;
 import overflow.rebridge.domain.member.Member;
 import overflow.rebridge.domain.member.MemberService;
-import overflow.rebridge.domain.member.Nation;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class JobPostingService {
@@ -31,6 +35,26 @@ public class JobPostingService {
         return jobPostings.stream()
                 .map(jobPosting -> toResponse(jobPosting, member))
                 .collect(Collectors.toList());
+    }
+
+    public List<List<JobPostingResponse>> findAllGroupedBy10(Long memberId) {
+        List<JobPosting> jobPostings = jobPostingRepository.findAll();
+        Member member = memberService.findMemberById(memberId);
+
+        List<JobPostingResponse> allResponses = jobPostings.stream()
+                .map(jobPosting -> toResponse(jobPosting, member))
+                .collect(Collectors.toList());
+
+        return groupBySize(allResponses, 10);
+    }
+
+    // 유틸 메서드
+    private <T> List<List<T>> groupBySize(List<T> list, int size) {
+        List<List<T>> result = new ArrayList<>();
+        for (int i = 0; i < list.size(); i += size) {
+            result.add(list.subList(i, Math.min(i + size, list.size())));
+        }
+        return result;
     }
 
     public JobPosting findJobPostingById(Long id) {
@@ -55,5 +79,58 @@ public class JobPostingService {
                 jobPosting.getDeadline(),
                 isBookmarked
         );
+    }
+
+    public List<JobPostingResponse> recommend(Long memberId) {
+        Member member = memberService.findMemberById(memberId);
+        log.info("🔍 추천 대상 회원 => ID: {}, Nation: {}, Field1: {}, Field2: {}",
+                member.getMemberId(), member.getNation(), member.getField1(), member.getField2());
+
+        List<JobPosting> primary = jobPostingRepository.findByNationAndField(member.getNation(), member.getField1());
+        log.info("✅ 1차 추천 공고 개수: {}", primary.size());
+
+        List<JobPosting> results = new ArrayList<>(primary.stream().limit(5).toList());
+
+        if (results.size() < 5 && member.getField2() != null && member.getField2() != Field.NONE) {
+            List<JobPosting> secondary = jobPostingRepository.findByNationAndField(member.getNation(), member.getField2());
+            log.info("✅ 2차 추천 공고 개수: {}", secondary.size());
+            secondary.removeIf(results::contains);
+            results.addAll(secondary.stream().limit(5 - results.size()).toList());
+        }
+
+        if (results.size() < 5) {
+            List<JobPosting> fallback = jobPostingRepository.findByNation(member.getNation());
+            fallback.removeIf(results::contains);
+            log.info("⚠️ 보완용 공고 개수: {}", fallback.size());
+            Collections.shuffle(fallback);
+            results.addAll(fallback.stream().limit(5 - results.size()).toList());
+        }
+
+        log.info("🎯 최종 추천 공고 수: {}", results.size());
+
+        return results.stream()
+                .map(jobPosting -> toResponse(jobPosting, member))
+                .collect(Collectors.toList());
+    }
+
+    public List<List<JobPostingResponse>> filter(FilteringRequest request, Long memberId) {
+        Member member = memberService.findMemberById(memberId);
+        List<JobPosting> filtered = jobPostingRepository.findAll().stream()
+                .filter(post -> isMatch(request.field(), post.getField().name()))
+                .filter(post -> isMatch(request.jobType(), post.getJobType().name()))
+                .filter(post -> isMatch(request.industryType(), post.getIndustryType().name()))
+                .filter(post -> isMatch(request.nation(), post.getNation().name()))
+                .filter(post -> isMatch(request.experience(), post.getExperience().name()))
+                .filter(post -> isMatch(request.koreanSkillLevel(), post.getKoreanSkillLevel().name()))
+                .toList();
+
+        List<JobPostingResponse> allResponses = filtered.stream()
+                .map(jobPosting -> toResponse(jobPosting, member))
+                .collect(Collectors.toList());
+
+        return groupBySize(allResponses, 10);
+    }
+    private boolean isMatch(String condition, String target) {
+        return condition == null || condition.isBlank() || condition.equalsIgnoreCase(target);
     }
 }

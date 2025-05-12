@@ -2,6 +2,7 @@ package overflow.rebridge.domain.member;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import org.hibernate.validator.constraints.UniqueElements;
 import overflow.rebridge.domain.auth.dto.SignupRequest;
 import overflow.rebridge.domain.bookmark.Bookmark;
 import overflow.rebridge.domain.checklist.CheckList;
@@ -26,7 +27,7 @@ public class Member extends BaseTimeEntity {
     @Column(name = "member_name")
     private String name;
 
-    @Column(name = "member_email")
+    @Column(name = "member_email", unique = true)
     private String email;
 
     @Column(name = "member_password")
@@ -35,7 +36,7 @@ public class Member extends BaseTimeEntity {
     @Column(name = "birthDate")
     private LocalDate birthDate;
 
-    @Column(name = "foreigner_number")
+    @Column(name = "foreigner_number", unique = true)
     private String foreignerNumber;
 
     @Enumerated(EnumType.STRING)
@@ -68,11 +69,12 @@ public class Member extends BaseTimeEntity {
 
     }
 
-    public Member(String name, String email, Role role, LoginType loginType) {
+    public Member(String name, String email, Role role, LoginType loginType, String foreignerNumber) {
         this.name = name;
         this.email = email;
         this.role = role;
         this.loginType = loginType;
+        this.foreignerNumber = foreignerNumber;
     }
 
     public Member(SignupRequest request, String encodedPassword) {
@@ -84,7 +86,20 @@ public class Member extends BaseTimeEntity {
         this.nation = Nation.valueOf(request.nation());
         this.field1 = Field.valueOf(request.industry1());
         this.field2 = Field.valueOf(request.industry2());
-        this.loginType = LoginType.LOCAL;
+        this.loginType = LoginType.valueOf(request.loginType());
         this.role = Role.MEMBER;
     }
+
+    public void updateInfo(SignupRequest request, String encodedPassword) {
+        this.password = encodedPassword;
+        this.name = request.name();
+        this.birthDate = request.birthDate();
+        this.foreignerNumber = request.foreignerNumber();
+        this.nation = Nation.valueOf(request.nation());
+        this.field1 = Field.valueOf(request.industry1());
+        this.field2 = Field.valueOf(request.industry2());
+        this.loginType = LoginType.valueOf(request.loginType());
+        this.role = Role.MEMBER;
+    }
+
 }

@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import overflow.rebridge.domain.auth.dto.*;
 import overflow.rebridge.domain.member.Member;
@@ -96,7 +95,7 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    @Operation(summary = "일반 회원가입")
+    @Operation(summary = "회원가입")
     public ResponseEntity<?> signup(@RequestBody SignupRequest request) {
         try {
             authService.signup(request);
@@ -110,7 +109,7 @@ public class AuthController {
     @Operation(summary = "아이디 찾기")
     public ResponseEntity<?> findId(@RequestBody FindIdRequest request) {
         try {
-            String email = authService.findid(request);
+            String email = authService.findId(request);
             return ResponseEntity.ok(email);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
