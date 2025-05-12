@@ -3,6 +3,7 @@ package overflow.rebridge.domain.jobPosting;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import overflow.rebridge.domain.bookmark.BookmarkRepository;
+import overflow.rebridge.domain.jobPosting.dto.FilteringRequest;
 import overflow.rebridge.domain.jobPosting.dto.JobPostingResponse;
 import overflow.rebridge.domain.member.Member;
 import overflow.rebridge.domain.member.MemberService;
@@ -112,5 +113,24 @@ public class JobPostingService {
                 .collect(Collectors.toList());
     }
 
+    public List<List<JobPostingResponse>> filter(FilteringRequest request, Long memberId) {
+        Member member = memberService.findMemberById(memberId);
+        List<JobPosting> filtered = jobPostingRepository.findAll().stream()
+                .filter(post -> isMatch(request.field(), post.getField().name()))
+                .filter(post -> isMatch(request.jobType(), post.getJobType().name()))
+                .filter(post -> isMatch(request.industryType(), post.getIndustryType().name()))
+                .filter(post -> isMatch(request.nation(), post.getNation().name()))
+                .filter(post -> isMatch(request.experience(), post.getExperience().name()))
+                .filter(post -> isMatch(request.koreanSkillLevel(), post.getKoreanSkillLevel().name()))
+                .toList();
 
+        List<JobPostingResponse> allResponses = filtered.stream()
+                .map(jobPosting -> toResponse(jobPosting, member))
+                .collect(Collectors.toList());
+
+        return groupBySize(allResponses, 10);
+    }
+    private boolean isMatch(String condition, String target) {
+        return condition == null || condition.isBlank() || condition.equalsIgnoreCase(target);
+    }
 }

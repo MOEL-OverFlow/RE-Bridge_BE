@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import overflow.rebridge.domain.jobPosting.dto.FilteringRequest;
 import overflow.rebridge.domain.jobPosting.dto.JobPostingResponse;
 import overflow.rebridge.global.security.LoginUser;
 
@@ -39,6 +40,16 @@ public class JobPostingController {
             @AuthenticationPrincipal LoginUser loginUser
     ){
         return ResponseEntity.ok(jobPostingService.recommend(loginUser.memberId()));
+    }
+
+    @PostMapping("/filtering")
+    @Operation(summary = "채용 공고 필터링 (10개 단위 페이지)")
+    public ResponseEntity<List<List<JobPostingResponse>>> filtering(
+            @RequestBody FilteringRequest request,
+            @AuthenticationPrincipal LoginUser loginUser
+    ) {
+        List<List<JobPostingResponse>> result = jobPostingService.filter(request, loginUser.memberId());
+        return ResponseEntity.ok(result);
     }
 
 }
