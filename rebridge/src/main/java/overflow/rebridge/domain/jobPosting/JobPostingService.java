@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import overflow.rebridge.domain.member.Nation;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -35,5 +36,10 @@ public class JobPostingService {
 
     public List<JobPosting> findByJobType(JobType jobType) {
         return jobPostingRepository.findByJobType(jobType);
+    }
+
+    public JobPosting findJobPostingById(Long id) {
+        return jobPostingRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 채용공고입니다."));
     }
 }
