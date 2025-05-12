@@ -1,5 +1,6 @@
 package overflow.rebridge.domain.jobPosting;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -17,12 +18,14 @@ public class JobPostingController {
     private final JobPostingService jobPostingService;
 
     @PostMapping("/crawl")
+    @Operation(summary = "수동 크롤링")
     public ResponseEntity<String> triggerCrawl() {
         jobPostingService.triggerCrawl();
         return ResponseEntity.ok("크롤링 완료");
     }
 
     @GetMapping
+    @Operation(summary = "모든 채용 공고 가져오기")
     public ResponseEntity<List<JobPostingResponse>> getAll(
             @AuthenticationPrincipal LoginUser loginUser
     ) {
