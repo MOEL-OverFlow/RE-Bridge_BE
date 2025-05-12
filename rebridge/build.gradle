@@ -47,8 +47,8 @@ dependencies {
 	//크롤링
 	implementation 'org.jsoup:jsoup:1.15.4'
 	// AWS S3
-	implementation platform("io.awspring.cloud:spring-cloud-aws-dependencies:3.0.2")
-	implementation 'io.awspring.cloud:spring-cloud-starter-s3'
+	implementation platform("software.amazon.awssdk:bom:2.25.8")
+	implementation "software.amazon.awssdk:s3"
 }
 
 tasks.named('test') {
