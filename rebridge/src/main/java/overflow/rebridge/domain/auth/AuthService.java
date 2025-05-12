@@ -28,9 +28,8 @@ public class AuthService {
 
         String encodedPassword = passwordEncoder.encode(request.password());
         Member member = new Member(request, encodedPassword);
-        imageService.saveImage(request.image(), member);
         memberRepository.save(member);
-
+        imageService.saveImage(request.image(), member);
         ResponseEntity.ok("회원가입 성공");
     }
 

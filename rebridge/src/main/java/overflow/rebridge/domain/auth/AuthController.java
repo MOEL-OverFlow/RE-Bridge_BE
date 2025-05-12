@@ -10,10 +10,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import overflow.rebridge.domain.auth.dto.*;
-import overflow.rebridge.domain.member.LoginType;
 import overflow.rebridge.domain.member.Member;
 import overflow.rebridge.domain.member.MemberRepository;
-import overflow.rebridge.domain.member.Role;
 import overflow.rebridge.global.security.jwt.JwtTokenProvider;
 
 import java.util.Map;
@@ -29,13 +27,13 @@ public class AuthController {
     private final RefreshTokenService refreshTokenService;
     private final AuthenticationManager authenticationManager;
     private final GoogleOAuthService googleOAuthService;
-    private final PasswordEncoder passwordEncoder;
     private final AuthService authService;
+    private final EmailVerificationService emailVerificationService;
 
     // 일반 로그인 API (email + password)
     @PostMapping("/login/local")
     @Operation(summary = "일반 로그인")
-    public ResponseEntity<?> login(@RequestBody LocalLoginRequest localLoginRequest) {
+    public ResponseEntity<LoginResponse> login(@RequestBody LocalLoginRequest localLoginRequest) {
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(localLoginRequest.email(), localLoginRequest.password())
@@ -49,10 +47,7 @@ public class AuthController {
 
         refreshTokenService.saveOrUpdate(member, refreshToken);
 
-        return ResponseEntity.ok(Map.of(
-                "accessToken", accessToken,
-                "refreshToken", refreshToken
-        ));
+        return ResponseEntity.ok(new LoginResponse(accessToken, refreshToken));
     }
 
     // 구글 로그인 API (accessToken 전달)
@@ -111,7 +106,8 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/findid")
+    @PostMapping("/findId")
+    @Operation(summary = "아이디 찾기")
     public ResponseEntity<?> findId(@RequestBody FindIdRequest request) {
         try {
             String email = authService.findid(request);
@@ -120,4 +116,24 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
+
+    @PostMapping("/send-verification")
+    @Operation(summary = "이메일 인증번호 전송")
+    public ResponseEntity<?> sendVerificationCode(@RequestBody EmailVerificationRequest verificationRequest) {
+        emailVerificationService.sendVerificationCode(verificationRequest.email());
+        return ResponseEntity.ok("인증번호가 이메일로 전송되었습니다.");
+    }
+
+    @PostMapping("/verify-code")
+    @Operation(summary = "이메일 인증번호 확인")
+    public ResponseEntity<?> verifyCode(@RequestBody EmailVerifyRequest request) {
+        boolean result = emailVerificationService.verifyCode(request.email(), request.code());
+
+        if (result) {
+            return ResponseEntity.ok("인증 성공");
+        } else {
+            return ResponseEntity.badRequest().body("인증번호가 일치하지 않습니다.");
+        }
+    }
+
 }

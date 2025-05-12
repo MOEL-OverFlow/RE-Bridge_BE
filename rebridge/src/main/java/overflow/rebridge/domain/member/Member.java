@@ -84,5 +84,7 @@ public class Member extends BaseTimeEntity {
         this.nation = Nation.valueOf(request.nation());
         this.field1 = Field.valueOf(request.industry1());
         this.field2 = Field.valueOf(request.industry2());
+        this.loginType = LoginType.LOCAL;
+        this.role = Role.MEMBER;
     }
 }
