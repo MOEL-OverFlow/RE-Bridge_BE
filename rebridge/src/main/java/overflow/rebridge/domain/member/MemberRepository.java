@@ -13,7 +13,9 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     Optional<Member> findByMemberId(Long memberId);
 
     Optional<Member> findByForeignerNumberAndNameAndNationAndBirthDate(
-            String foreignerNumber, String name, String nation, LocalDate birthDate);
+            String foreignerNumber, String name, Nation nation, LocalDate birthDate);
+
+    Optional<Member> findByForeignerNumber(String s);
 }
 
 
