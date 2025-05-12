@@ -46,6 +46,8 @@ dependencies {
 	implementation 'org.hibernate.validator:hibernate-validator'
 	//크롤링
 	implementation 'org.jsoup:jsoup:1.15.4'
+	// AWS S3
+	implementation 'io.awspring.cloud:spring-cloud-starter-aws:2.4.4'
 }
 
 tasks.named('test') {
