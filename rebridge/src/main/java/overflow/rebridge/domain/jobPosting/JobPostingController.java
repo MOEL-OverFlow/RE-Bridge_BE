@@ -25,12 +25,13 @@ public class JobPostingController {
     }
 
     @GetMapping
-    @Operation(summary = "모든 채용 공고 가져오기")
-    public ResponseEntity<List<JobPostingResponse>> getAll(
+    @Operation(summary = "모든 채용 공고 가져오기 (10개 단위 페이지)")
+    public ResponseEntity<List<List<JobPostingResponse>>> getAll(
             @AuthenticationPrincipal LoginUser loginUser
     ) {
-        return ResponseEntity.ok(jobPostingService.findAll(loginUser.memberId()));
+        return ResponseEntity.ok(jobPostingService.findAllGroupedBy10(loginUser.memberId()));
     }
+
 
     @GetMapping("/recommend")
     @Operation(summary = "추천 채용 공고 불러오기")

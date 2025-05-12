@@ -36,6 +36,26 @@ public class JobPostingService {
                 .collect(Collectors.toList());
     }
 
+    public List<List<JobPostingResponse>> findAllGroupedBy10(Long memberId) {
+        List<JobPosting> jobPostings = jobPostingRepository.findAll();
+        Member member = memberService.findMemberById(memberId);
+
+        List<JobPostingResponse> allResponses = jobPostings.stream()
+                .map(jobPosting -> toResponse(jobPosting, member))
+                .collect(Collectors.toList());
+
+        return groupBySize(allResponses, 10);
+    }
+
+    // 유틸 메서드
+    private <T> List<List<T>> groupBySize(List<T> list, int size) {
+        List<List<T>> result = new ArrayList<>();
+        for (int i = 0; i < list.size(); i += size) {
+            result.add(list.subList(i, Math.min(i + size, list.size())));
+        }
+        return result;
+    }
+
     public JobPosting findJobPostingById(Long id) {
         return jobPostingRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 채용공고입니다."));
