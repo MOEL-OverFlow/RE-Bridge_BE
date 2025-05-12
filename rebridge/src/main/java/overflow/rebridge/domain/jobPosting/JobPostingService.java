@@ -113,7 +113,7 @@ public class JobPostingService {
                 .collect(Collectors.toList());
     }
 
-    public List<List<JobPostingResponse>> filter(FilteringRequest request, Long memberId) {
+    public List<JobPostingResponse> filter(FilteringRequest request, Long memberId) {
         Member member = memberService.findMemberById(memberId);
         List<JobPosting> filtered = jobPostingRepository.findAll().stream()
                 .filter(post -> isMatch(request.field(), post.getField().name()))
@@ -124,11 +124,10 @@ public class JobPostingService {
                 .filter(post -> isMatch(request.koreanSkillLevel(), post.getKoreanSkillLevel().name()))
                 .toList();
 
-        List<JobPostingResponse> allResponses = filtered.stream()
+        return filtered.stream()
                 .map(jobPosting -> toResponse(jobPosting, member))
                 .collect(Collectors.toList());
 
-        return groupBySize(allResponses, 10);
     }
     private boolean isMatch(String condition, String target) {
         return condition == null || condition.isBlank() || condition.equalsIgnoreCase(target);

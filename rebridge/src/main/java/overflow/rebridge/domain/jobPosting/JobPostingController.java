@@ -26,11 +26,11 @@ public class JobPostingController {
     }
 
     @GetMapping
-    @Operation(summary = "모든 채용 공고 가져오기 (10개 단위 페이지)")
-    public ResponseEntity<List<List<JobPostingResponse>>> getAll(
+    @Operation(summary = "모든 채용 공고 가져오기")
+    public ResponseEntity<List<JobPostingResponse>> getAll(
             @AuthenticationPrincipal LoginUser loginUser
     ) {
-        return ResponseEntity.ok(jobPostingService.findAllGroupedBy10(loginUser.memberId()));
+        return ResponseEntity.ok(jobPostingService.findAll(loginUser.memberId()));
     }
 
 
@@ -44,12 +44,11 @@ public class JobPostingController {
 
     @PostMapping("/filtering")
     @Operation(summary = "채용 공고 필터링 (10개 단위 페이지)")
-    public ResponseEntity<List<List<JobPostingResponse>>> filtering(
+    public ResponseEntity<List<JobPostingResponse>> filtering(
             @RequestBody FilteringRequest request,
             @AuthenticationPrincipal LoginUser loginUser
     ) {
-        List<List<JobPostingResponse>> result = jobPostingService.filter(request, loginUser.memberId());
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(jobPostingService.filter(request, loginUser.memberId()));
     }
 
 }
