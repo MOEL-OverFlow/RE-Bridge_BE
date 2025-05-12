@@ -8,7 +8,7 @@ import overflow.rebridge.domain.bookmark.Bookmark;
 import overflow.rebridge.domain.checklist.CheckList;
 import overflow.rebridge.domain.image.Image;
 import overflow.rebridge.domain.jobPosting.Field;
-import overflow.rebridge.domain.member.dto.LoginType;
+import overflow.rebridge.domain.member.dto.mypageResponse;
 import overflow.rebridge.global.entity.BaseTimeEntity;
 
 import java.time.LocalDate;
@@ -121,5 +121,17 @@ public class Member extends BaseTimeEntity {
 
     public void updatePassword(String encodedPassword) {
         this.password = encodedPassword;
+    }
+
+    public mypageResponse toInfo() {
+        return new mypageResponse(
+                this.email,
+                this.image.getUrl(),
+                this.name,
+                this.birthDate,
+                this.nation.toString(),
+                this.field1.toString(),
+                this.field2.toString()
+        );
     }
 }

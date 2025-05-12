@@ -1,10 +1,12 @@
 package overflow.rebridge.domain.image;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 import overflow.rebridge.domain.member.Member;
 
 @Entity
 @Table(name = "image")
+@Getter
 public class Image {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
