@@ -2,7 +2,7 @@ package overflow.rebridge.domain.member;
 
 import jakarta.persistence.*;
 import lombok.Getter;
-import org.hibernate.validator.constraints.UniqueElements;
+import overflow.rebridge.domain.auth.dto.FindPasswordRequest;
 import overflow.rebridge.domain.auth.dto.SignupRequest;
 import overflow.rebridge.domain.bookmark.Bookmark;
 import overflow.rebridge.domain.checklist.CheckList;
@@ -102,4 +102,23 @@ public class Member extends BaseTimeEntity {
         this.role = Role.MEMBER;
     }
 
+    public boolean check(FindPasswordRequest request) {
+        if(!this.email.equals(request.email())) {
+            return false;
+        }
+        else if (!this.name.equals(request.name())) {
+            return false;
+        }
+        else if (!this.foreignerNumber.equals(request.foreignerNumber())) {
+            return false;
+        }
+        else if (!this.birthDate.equals(request.birthDate())) {
+            return false;
+        }
+        return true;
+    }
+
+    public void updatePassword(String encodedPassword) {
+        this.password = encodedPassword;
+    }
 }

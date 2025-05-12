@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import overflow.rebridge.domain.auth.dto.FindIdRequest;
+import overflow.rebridge.domain.auth.dto.FindPasswordRequest;
 import overflow.rebridge.domain.auth.dto.SignupRequest;
 import overflow.rebridge.domain.image.ImageService;
 import overflow.rebridge.domain.member.Member;
@@ -14,6 +15,7 @@ import overflow.rebridge.domain.member.Nation;
 import overflow.rebridge.domain.member.Role;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +24,7 @@ public class AuthService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final ImageService imageService;
+    private final EmailVerificationService emailVerificationService;
 
     public void signup(SignupRequest request) {
         Optional<Member> optionalMember = memberRepository.findByEmail(request.email());
@@ -67,4 +70,24 @@ public class AuthService {
 
         return member.getEmail();
     }
+
+    public void sendTemporaryPassword(FindPasswordRequest request) {
+        Member member = memberRepository.findByEmail(request.email())
+                .orElseThrow(() -> new IllegalArgumentException("일치하는 회원 정보를 찾을 수 없습니다."));
+        if (!member.check(request)){
+            throw new IllegalArgumentException("정보를 다시 확인해주세요.");
+        }
+
+        String tempPassword = generateTempPassword();
+        String encodedPassword = passwordEncoder.encode(tempPassword);
+        member.updatePassword(encodedPassword); // 엔티티에 패스워드 업데이트 메서드 필요
+
+        memberRepository.save(member);
+        emailVerificationService.sendTemporaryPassword(member.getEmail(), tempPassword);
+    }
+
+    private String generateTempPassword() {
+        return UUID.randomUUID().toString().substring(0, 10);
+    }
+
 }

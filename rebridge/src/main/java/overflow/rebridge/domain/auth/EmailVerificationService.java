@@ -44,6 +44,26 @@ public class EmailVerificationService {
         return code.equals(verificationMap.get(email));
     }
 
+    public void sendTemporaryPassword(String email, String tempPassword) {
+        String subject = "[RE-Bridge] 임시 비밀번호 안내";
+        String body = String.format("""
+                안녕하세요.
+
+                회원님의 임시 비밀번호는 다음과 같습니다:
+
+                🔐 임시 비밀번호: %s
+
+                로그인 후 반드시 마이페이지에서 비밀번호를 변경해주세요.
+                감사합니다.
+                """, tempPassword);
+
+        try {
+            sendEmail(email, subject, body);
+        } catch (MessagingException e) {
+            throw new IllegalStateException("임시 비밀번호 이메일 전송에 실패했습니다.");
+        }
+    }
+
     private void sendEmail(String to, String subject, String body) throws MessagingException {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, false, "UTF-8");
