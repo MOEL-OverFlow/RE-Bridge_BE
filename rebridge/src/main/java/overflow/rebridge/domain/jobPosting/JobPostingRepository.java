@@ -9,4 +9,6 @@ public interface JobPostingRepository extends JpaRepository<JobPosting, Long> {
     boolean existsByDetailUrl(String detailUrl);
 
     List<JobPosting> findByNationAndField(Nation nation, Field field);
+
+    List<JobPosting> findByNation(Nation nation);
 }

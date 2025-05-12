@@ -12,7 +12,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class JobPostingService {
@@ -59,23 +61,36 @@ public class JobPostingService {
     }
 
     public List<JobPostingResponse> recommend(Long memberId) {
-
         Member member = memberService.findMemberById(memberId);
+        log.info("🔍 추천 대상 회원 => ID: {}, Nation: {}, Field1: {}, Field2: {}",
+                member.getMemberId(), member.getNation(), member.getField1(), member.getField2());
+
         List<JobPosting> primary = jobPostingRepository.findByNationAndField(member.getNation(), member.getField1());
-        Collections.shuffle(primary);
+        log.info("✅ 1차 추천 공고 개수: {}", primary.size());
+
         List<JobPosting> results = new ArrayList<>(primary.stream().limit(5).toList());
 
-        if (results.size() < 5 && member.getField2() != null) {
+        if (results.size() < 5 && member.getField2() != null && member.getField2() != Field.NONE) {
             List<JobPosting> secondary = jobPostingRepository.findByNationAndField(member.getNation(), member.getField2());
-            Collections.shuffle(secondary);
-            // 중복 제거
-            secondary.removeIf(job -> results.contains(job));
+            log.info("✅ 2차 추천 공고 개수: {}", secondary.size());
+            secondary.removeIf(results::contains);
             results.addAll(secondary.stream().limit(5 - results.size()).toList());
         }
+
+        if (results.size() < 5) {
+            List<JobPosting> fallback = jobPostingRepository.findByNation(member.getNation());
+            fallback.removeIf(results::contains);
+            log.info("⚠️ 보완용 공고 개수: {}", fallback.size());
+            Collections.shuffle(fallback);
+            results.addAll(fallback.stream().limit(5 - results.size()).toList());
+        }
+
+        log.info("🎯 최종 추천 공고 수: {}", results.size());
 
         return results.stream()
                 .map(jobPosting -> toResponse(jobPosting, member))
                 .collect(Collectors.toList());
     }
+
 
 }
