@@ -2,6 +2,7 @@ package overflow.rebridge.domain.member;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import org.hibernate.validator.constraints.UniqueElements;
 import overflow.rebridge.domain.auth.dto.SignupRequest;
 import overflow.rebridge.domain.bookmark.Bookmark;
 import overflow.rebridge.domain.checklist.CheckList;
@@ -26,7 +27,7 @@ public class Member extends BaseTimeEntity {
     @Column(name = "member_name")
     private String name;
 
-    @Column(name = "member_email")
+    @Column(name = "member_email", unique = true)
     private String email;
 
     @Column(name = "member_password")
@@ -35,7 +36,7 @@ public class Member extends BaseTimeEntity {
     @Column(name = "birthDate")
     private LocalDate birthDate;
 
-    @Column(name = "foreigner_number")
+    @Column(name = "foreigner_number", unique = true)
     private String foreignerNumber;
 
     @Enumerated(EnumType.STRING)
