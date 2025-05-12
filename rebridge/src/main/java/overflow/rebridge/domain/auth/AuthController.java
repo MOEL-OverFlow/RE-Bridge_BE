@@ -109,7 +109,7 @@ public class AuthController {
     @Operation(summary = "아이디 찾기")
     public ResponseEntity<?> findId(@RequestBody FindIdRequest request) {
         try {
-            String email = authService.findid(request);
+            String email = authService.findId(request);
             return ResponseEntity.ok(email);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());

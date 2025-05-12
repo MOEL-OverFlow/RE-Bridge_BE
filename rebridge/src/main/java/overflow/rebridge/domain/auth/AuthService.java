@@ -33,7 +33,7 @@ public class AuthService {
         ResponseEntity.ok("회원가입 성공");
     }
 
-    public String findid(FindIdRequest request) {
+    public String findId(FindIdRequest request) {
         Member member = memberRepository.findByForeignerNumberAndNameAndNationAndBirthDate(
                 request.foreignerNumber(),
                 request.name(),
