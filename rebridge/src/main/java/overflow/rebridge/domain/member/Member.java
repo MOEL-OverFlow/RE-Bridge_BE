@@ -5,7 +5,7 @@ import lombok.Getter;
 import overflow.rebridge.domain.auth.dto.SignupRequest;
 import overflow.rebridge.domain.checklist.CheckList;
 import overflow.rebridge.domain.image.Image;
-import overflow.rebridge.domain.interest.Interest;
+import overflow.rebridge.domain.jobPosting.Field;
 import overflow.rebridge.global.entity.BaseTimeEntity;
 
 import java.time.LocalDate;
@@ -49,10 +49,10 @@ public class Member extends BaseTimeEntity {
     private Nation nation;
 
     @Enumerated(EnumType.STRING)
-    private Industry industry1;
+    private Field field1;
 
     @Enumerated(EnumType.STRING)
-    private Industry industry2;
+    private Field field2;
 
     @OneToOne(mappedBy = "member")
     private Image image;
@@ -78,7 +78,7 @@ public class Member extends BaseTimeEntity {
         this.birthDate = request.birthDate();
         this.foreignerNumber = request.foreignerNumber();
         this.nation = Nation.valueOf(request.nation());
-        this.industry1 = Industry.valueOf(request.industry1());
-        this.industry2 = Industry.valueOf(request.industry2());
+        this.field1 = Field.valueOf(request.industry1());
+        this.field2 = Field.valueOf(request.industry2());
     }
 }
