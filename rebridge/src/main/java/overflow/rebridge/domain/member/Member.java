@@ -69,11 +69,12 @@ public class Member extends BaseTimeEntity {
 
     }
 
-    public Member(String name, String email, Role role, LoginType loginType) {
+    public Member(String name, String email, Role role, LoginType loginType, String foreignerNumber) {
         this.name = name;
         this.email = email;
         this.role = role;
         this.loginType = loginType;
+        this.foreignerNumber = foreignerNumber;
     }
 
     public Member(SignupRequest request, String encodedPassword) {
@@ -88,4 +89,17 @@ public class Member extends BaseTimeEntity {
         this.loginType = LoginType.valueOf(request.loginType());
         this.role = Role.MEMBER;
     }
+
+    public void updateInfo(SignupRequest request, String encodedPassword) {
+        this.password = encodedPassword;
+        this.name = request.name();
+        this.birthDate = request.birthDate();
+        this.foreignerNumber = request.foreignerNumber();
+        this.nation = Nation.valueOf(request.nation());
+        this.field1 = Field.valueOf(request.industry1());
+        this.field2 = Field.valueOf(request.industry2());
+        this.loginType = LoginType.valueOf(request.loginType());
+        this.role = Role.MEMBER;
+    }
+
 }

@@ -36,7 +36,7 @@ public class GoogleOAuthService {
             // 2. DB에서 회원 조회 또는 생성
             Optional<Member> optionalMember = memberRepository.findByEmail(email);
             Member member = optionalMember.orElseGet(() -> {
-                Member newMember = new Member(name, email, Role.GUEST, LoginType.GOOGLE);
+                Member newMember = new Member(name, email, Role.GUEST, LoginType.GOOGLE, email);
                 return memberRepository.save(newMember);
             });
 
