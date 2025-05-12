@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import overflow.rebridge.domain.auth.dto.FindIdRequest;
 import overflow.rebridge.domain.auth.dto.SignupRequest;
 import overflow.rebridge.domain.image.Image;
 import overflow.rebridge.domain.image.ImageService;
@@ -34,5 +35,16 @@ public class AuthService {
         memberRepository.save(member);
 
         ResponseEntity.ok("회원가입 성공");
+    }
+
+    public String findid(FindIdRequest request) {
+        Member member = memberRepository.findByForeignerNumberAndNameAndNationAndBirthDate(
+                request.foreignerNumber(),
+                request.name(),
+                request.nation(),
+                request.birthDate()
+        ).orElseThrow(() -> new IllegalArgumentException("일치하는 회원 정보를 찾을 수 없습니다."));
+
+        return member.getEmail();
     }
 }
