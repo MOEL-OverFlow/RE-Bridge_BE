@@ -30,4 +30,16 @@ public class CheckList {
 
     @OneToOne(mappedBy = "checkList", cascade = CascadeType.ALL)
     private EducationProgram educationProgram;
+
+    public CheckList() {}
+
+    // 체크리스트 생성용 생성자
+    public CheckList(Member member) {
+        this.member = member;
+
+        // 하위 엔티티들 생성 + 연결
+        this.document = new Document(this);
+        this.insurance = new Insurance(this);
+        this.educationProgram = new EducationProgram(this);
+    }
 }
